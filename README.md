@@ -25,7 +25,7 @@ dbuser = "root"  # YOUR MySQL USERNAME
 dbpass = "<your_password>"  # "YOUR PASSWORD"
 dbhost = "localhost"  # "YOUR HOST"
 dbport = "3306" # "YOUR PORT"
-dbname = "pgtracker" # "YOUR DATABASE NAME"
+dbname = "PurrfectHome" # "YOUR DATABASE NAME"
 ```
 
 2. Run below command in your terminal to install required dependencies
