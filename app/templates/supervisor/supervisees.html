@@ -1,0 +1,164 @@
+{% extends "layouts/base.html" %} {% block title %} View Students {% endblock %}
+{% block content %}
+<div>  
+
+
+    <br />
+    <div class="card">
+      <div class="card-header">Students</div>
+      <div class="card-body">
+        {% if supervisees %}
+          
+            <table class="table"id="myTable">
+              <thead>
+                <tr>
+                  <th>Student ID</th>
+                  <th>Name</th>
+                  <th>Email Address</th>
+                  <th>Contact Number</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for student in supervisees %}
+                  <tr>
+                    <td>{{student.student_id}}</td>
+                    <td>{{student.student_first_name}} {{student.student_last_name}}</td>
+                    <td>{{student.email}}</td>
+                    <td>{{student.phone}}</td>
+                    <!-- Button trigger modal for viewing full details of selected student-->
+                    <td>
+                      <button
+                        type="button"
+                        class="btn btn-outline-primary btn-sm"
+                        data-bs-toggle="modal"
+                        data-bs-target="#view_student{{student.student_id}}"
+                      >
+                        View Profile
+                      </button>
+                    </td>
+
+                    <!-- Modal -->
+                    <div
+                      class="modal fade"
+                      id="view_student{{student.student_id}}"
+                      tabindex="-1"
+                      aria-labelledby="view_studentLabel"
+                      aria-hidden="true"
+                    >
+                      <div class="modal-dialog modal-fullscreen-lg-down">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h1 class="modal-title fs-5" id="view_studentLabel">
+                              {{student.student_first_name}} {{student.student_last_name}}
+                            </h1>
+                            <button
+                              type="button"
+                              class="btn-close"
+                              data-bs-dismiss="modal"
+                              aria-label="Close"
+                            ></button>
+                          </div>
+                          <!-- modal body student full detail-->
+                          <div class="modal-body">
+                            <div class="card">
+                              <ul class="list-group list-group-flush">
+                                <li class="list-group-item">
+                                  <!-- personal details field -->
+                                  <h6>Personal Details</h6>
+                                  <div>Name: {{student.student_first_name}} {{student.student_last_name}}</div>
+                                  <div>Enrolment Date: {{student.enrolment_date}}</div>
+                                  <div>Email: {{student.email}}</div>
+                                  <div>Contact Number: {{student.phone}}</div>
+                                  <div>Address: {{student.address}}</div>
+                                </li>
+
+                                <li class="list-group-item">
+                                  <!-- employment details field -->
+                                  <h6>Employment at LU</h6>
+                                  {% if student.employment | length > 0 %}
+                                  {% for emp in student.employment %}
+                                  <div class="employment-section">
+                                    <div class="table-format">
+                                      <p>Employment Type</p>
+                                      <div>{{emp.employment_type}}</div>
+                                    </div>
+                                    
+                                      <div class="table-format">
+                                        <p>Supervisor Name</p>
+                                        <div>{{emp.supervisor_name}}</div>
+                                      </div>
+                                    
+                                    <div class="table-format">
+                                      <p>Hours per Week</p>
+                                      <div>{{emp.hours_per_week}}</div> 
+                                    </div>
+                                  </div>
+                                  {% endfor %}
+                                  {% else %} 
+                                  <div>No employment details found.</div>
+                                  {% endif %}
+                                </li>
+                                <li class="list-group-item">
+                                  <!-- scholarship details field -->
+                                  <h6>Scholarship</h6>
+                                  {% if student.scholarships | length > 0 %}
+                                  {% for scholarship in student.scholarships %}
+                                  <div class="scholarship-section">
+                                    <div class="table-format">
+                                      <p>Scholarship Name</p>
+                                      <div>{{scholarship.scholarship_name}}</div>
+                                    </div>
+                                    <div class="table-format">
+                                      <p>Scholarship Value</p>
+                                      <div>{{scholarship.value}}</div>
+                                    </div>
+                                    <div class="table-format">
+                                      <p>Tenure</p>
+                                      <div>{{scholarship.tenure}}</div>
+                                    </div>
+                                  </div>
+                                  {% endfor %}
+                                  {% else %}
+                                  <div>No scholarship details found.</div>
+                                  {% endif %}
+                                </li>
+                              </ul>
+                            </div>
+                          </div>
+                          <div class="modal-footer">
+                            <button
+                              type="button"
+                              class="btn btn-primary"
+                              data-bs-dismiss="modal"
+                            >
+                              Close
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+        {% else %} 
+        <div>No supervisees found</div> 
+        {% endif %}
+      </div>
+    </div>    
+  </div>
+</div>
+
+{% endblock %}
+
+
+{% block script%}
+<script>
+  $(document).ready(function () {
+    $("#myTable").DataTable({
+      columnDefs: [{ targets: 4, orderable: false }],
+    });
+  });
+</script>
+{% endblock %}

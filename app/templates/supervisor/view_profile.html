@@ -1,0 +1,63 @@
+{% extends "layouts/base.html" %} {% block title %} Update my profile {%
+  endblock %} {% block content %}
+  
+  <h2>View My Profile</h2>
+  <br />
+<div class="card">
+  <div class="card-header update-header d-flex gap-5 bg-light text-black">
+    <p>Supervisor ID: {{supervisor.supervisor_id}}</p>
+    <p>Email: {{supervisor.email}}</span></p>
+    <p>Department: {{supervisor.department_name}}</span></p>
+  </div>
+  <input
+    type="hidden"
+    class="form-control"
+    id="supervisor_id"
+    name="supervisor_id"
+    value="{{supervisor.supervisor_id}}"
+  />
+
+  <h5 class="m-2">Personal Details</h5>
+  <div class="row mt-1 m-2">
+    <div class="col-md-6">
+      <p>First Name: <span>{{supervisor.first_name}}</span></p>
+    </div>
+    <div class="col-md-6">
+      <p>Last Name: <span>{{supervisor.last_name}}</span></p>
+    </div>
+    <div class="col-md-6">
+      <p>Phone Number: <span>{{supervisor.phone}}</span></p> 
+    </div>
+  </div>  
+  <h5 class="m-2">Supervisee(s)</h5>
+  {% if students %}
+  <div class="row flex justify-content-center m-2">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Thesis Title</th>
+          <th>Contact Number</th>
+          <th>Email</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for student in students %}
+        <tr>
+          <td>{{student.student_first_name}} {{student.student_last_name}}</td>
+          <td>{% if student.thesis_title %}{{student.thesis_title}}{% endif %}</td>
+          <td>{{student.phone}}</td>
+          <td>{{student.email}}</td>
+        </tr>
+        {% endfor %}
+      </tbody>          
+    </table>
+  </div>  
+  {% else %}
+  <div class="row flex justify-content-center m-2">
+    <p>No supervisees assigned yet.</p>
+  </div>  
+  {% endif %}
+</div>
+
+{% endblock %}

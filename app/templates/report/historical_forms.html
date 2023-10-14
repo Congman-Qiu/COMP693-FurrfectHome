@@ -1,0 +1,72 @@
+{% extends "layouts/base.html" %} {% block title %} Previous 6MR {% endblock %}
+{% block content %}
+<div>
+  <!-- Page Heading -->
+  <div class="page-heading mb-4">
+    {% for message in get_flashed_messages()%}
+    <div class="alert alert-primary alert-dismissible fade show" role="alert">
+      {{ message }}
+      <button
+        type="button"
+        class="btn-close"
+        data-bs-dismiss="alert"
+        aria-label="Close"
+      ></button>
+    </div>
+    {% endfor %}
+    <h2>Previous 6MR</h2>
+  </div>
+  <div>
+    <div class="row">
+      <div class="col-md-12 mb-4">
+        <div class="card">
+          <h5 class="card-header">Previous 6MR</h5>
+          <div class="card-body">
+            {% if forms %}
+            <table class="table" id="myTable">
+              <thead>
+                <tr>
+                  <th>Student ID</th>
+                  <th>Name</th>
+                  <th>Form Date</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for form in forms %}
+                <tr>
+                  <td>{{form.created_user_id}}</td>
+                  <td>
+                    {{form.student_first_name}} {{form.student_last_name}}
+                  </td>
+                  <td>{{form.year}} / {{form.month}}</td>
+                  <td>
+                    <a
+                      href="/form/section_a?form_id={{form.form_id}}&student_id={{form.created_user_id}}"
+                      class="btn btn-sm btn-outline-primary"
+                    >
+                      View 6MR
+                    </a>
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+            {% else %}
+            <h6>No previous 6MR available.</h6>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %} {% block script%}
+<script>
+  $(document).ready(function () {
+    $("#myTable").DataTable({
+      columnDefs: [{ targets: 3, orderable: false }],
+    });
+  });
+</script>
+{% endblock %}

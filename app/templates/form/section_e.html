@@ -1,0 +1,352 @@
+{% extends "layouts/base.html" %} {% block title %} 6MR Form - Section E {% endblock %} {% block content %} 
+<div>
+   <!-- Page Heading -->
+   <div class="page-heading mb-4"> {% for message in get_flashed_messages()%} <div
+         class="alert alert-primary alert-dismissible fade show" role="alert"> {{ message }} <button type="button"
+            class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div> {% endfor %} <h2>6MR Form (Draft)</h2>
+   </div>
+
+<!-- Page Content -->
+   <div class="row">
+      <div class="col-md-12 mb-4">
+         <div class="card">
+            <h5 class="card-header">Section E - Assessment of Student by Supervisor(s)</h5>
+            <div class="card-body">
+               <div class="row mb-3">
+                  <div class="col-md-12">
+                     <form action="/form/section_e" method="POST">
+                        <div class="row">
+                           <div class="col-md-12">
+                              <input type="hidden" id="form_id" name="form_id" value="{{form_id}}">
+                              <input type="hidden" id="student_id" name="student_id" value="{{student_id}}">
+                              <div class="text-sm">
+                                 <p>This form will remain confidential to the Supervisor(s), Student, Faculty Postgraduate Administrator / Chairperson
+                                    and Faculty Dean (or nominee). Note that external supervisors/advisors/Tuakana are required to complete this
+                                    assessment form where the student is working primarily offsite.</p>
+                                    
+                                    <p>Supervisors are required to use this form to comment on students at six-monthly intervals, but this form may be used
+                                       at any time if problems arise. Students will subsequently receive a copy of these forms with supervisors’ comments on
+                                       them. If the student is unhappy with these comments they can approach the Faculty Postgraduate Chairperson (or the LU
+                                       Postgraduate Director, see page 1) to discuss the issue. If the student’s progress is unsatisfactory in a major way,
+                                       without prospects of resolution, further action may be taken (see the PhD House Rules).
+                                    </p>
+                                 </div>
+                              <br>
+
+                              <h6>Student: <span>{{student.student_first_name}} {{student.student_last_name}} [{{student.student_id}}]</span></h6> 
+                              
+                              <!-- supervisor(create)/ admin(view) -->                             
+                              {% if user_type == 'supervisor' or user_type == 'administrator' or user_type == "student" %}
+                              <br>
+                              <input type="hidden" name="submit_user_type" value="supervisor">
+                              {% for supervisor_answer in answer_list.supervisor_answers_list %}
+                                 {% if user_type == "administrator" or user_type == "student" or supervisor_answer.supervisor_id[0] == supervisor.supervisor_id %}
+                                    <div class="mt-3">
+                                       <h4 class="header-l-primary">
+                                          {% if supervisor_answer %}
+                                                <span>{{ supervisor_answer.supervisor_type | capitalize}} Supervisor: </span>
+                                                {{supervisor_answer.supervisor_name}}
+                                          {% else %}
+                                             <span>Supervisor</span>
+                                          {% endif %}
+                                       </h4>
+                                       <br>
+                                       <h6 class="form-label">Please rate the student's performance in the areas named below by placing a tick in the appropriate boxes. </h6>
+                                       <table class="table text-sm">
+                                          <tr>
+                                             <th></th>
+                                             <th class="text-center">Excellent</th>
+                                             <th class="text-center">Good</th>
+                                             <th class="text-center">Satisfactory</th>
+                                             <th class="text-center">Below Average</th>
+                                             <th class="text-center">Unsatisfactory</th>
+                                          </tr>
+                                          {% for question in supervisor_answer.performance_questions %}
+                                             {% if supervisor_answer.performance_answers %}
+                                             <tr>
+                                                <td class="first-col">{{question[2]}}</td>
+                                                {% for answer in supervisor_answer.performance_answers %}
+                                                   {% if answer.question_id == question[0]%}
+                                                      {% set postfix = "" %}
+                                                      {% if answer.answer_value == '5' %}
+                                                      {% if user_type == "administrator" or user_type == "student" %}{% set postfix = '_5_' + supervisor_answer.supervisor_id[0] | string %}{% endif %}
+                                                         <td class="text-center"><input type="radio" value="5" name="perf_rating_{{question[0]}}{{postfix}}" checked required /></td>
+                                                         <td class="text-center"><input type="radio" value="4" name="perf_rating_{{question[0]}}{{postfix}}"></td>
+                                                         <td class="text-center"><input type="radio" value="3" name="perf_rating_{{question[0]}}{{postfix}}"></td>
+                                                         <td class="text-center"><input type="radio" value="2" name="perf_rating_{{question[0]}}{{postfix}}"></td>
+                                                         <td class="text-center"><input type="radio" value="1" name="perf_rating_{{question[0]}}{{postfix}}"></td>
+                                                      {% elif answer.answer_value == '4' %}
+                                                      {% if user_type == "administrator" or user_type == "student" %}{% set postfix = '_4_' + supervisor_answer.supervisor_id[0] | string %}{% endif %}
+                                                         <td class="text-center"><input type="radio" value="5" name="perf_rating_{{question[0]}}{{postfix}}"></td>
+                                                         <td class="text-center"><input type="radio" value="4" name="perf_rating_{{question[0]}}{{postfix}}" checked required /></td>
+                                                         <td class="text-center"><input type="radio" value="3" name="perf_rating_{{question[0]}}{{postfix}}"></td>
+                                                         <td class="text-center"><input type="radio" value="2" name="perf_rating_{{question[0]}}{{postfix}}"></td>
+                                                         <td class="text-center"><input type="radio" value="1" name="perf_rating_{{question[0]}}{{postfix}}"></td>
+                                                      {% elif answer.answer_value == '3' %}
+                                                      {% if user_type == "administrator" or user_type == "student" %}{% set postfix = '_3_' + supervisor_answer.supervisor_id[0] | string %}{% endif %}
+                                                         <td class="text-center"><input type="radio" value="5" name="perf_rating_{{question[0]}}{{postfix}}"></td>
+                                                         <td class="text-center"><input type="radio" value="4" name="perf_rating_{{question[0]}}{{postfix}}"></td>
+                                                         <td class="text-center"><input type="radio" value="3" name="perf_rating_{{question[0]}}{{postfix}}" checked required /></td>
+                                                         <td class="text-center"><input type="radio" value="2" name="perf_rating_{{question[0]}}{{postfix}}"></td>
+                                                         <td class="text-center"><input type="radio" value="1" name="perf_rating_{{question[0]}}{{postfix}}"></td>
+                                                      {% elif answer.answer_value == '2' %}
+                                                      {% if user_type == "administrator" or user_type == "student" %}{% set postfix = '_2_' + supervisor_answer.supervisor_id[0] | string %}{% endif %}
+                                                         <td class="text-center"><input type="radio" value="5" name="perf_rating_{{question[0]}}{{postfix}}"></td>
+                                                         <td class="text-center"><input type="radio" value="4" name="perf_rating_{{question[0]}}{{postfix}}"></td>
+                                                         <td class="text-center"><input type="radio" value="3" name="perf_rating_{{question[0]}}{{postfix}}"></td>
+                                                         <td class="text-center"><input type="radio" value="2" name="perf_rating_{{question[0]}}{{postfix}}" checked required /></td>
+                                                         <td class="text-center"><input type="radio" value="1" name="perf_rating_{{question[0]}}{{postfix}}"></td>
+                                                      {% elif answer.answer_value == '1' %}
+                                                      {% if user_type == "administrator" or user_type == "student" %}{% set postfix = '_1_' + supervisor_answer.supervisor_id[0] | string %}{% endif %}
+                                                         <td class="text-center"><input type="radio" value="5" name="perf_rating_{{question[0]}}{{postfix}}"></td>
+                                                         <td class="text-center"><input type="radio" value="4" name="perf_rating_{{question[0]}}{{postfix}}"></td>
+                                                         <td class="text-center"><input type="radio" value="3" name="perf_rating_{{question[0]}}{{postfix}}"></td>
+                                                         <td class="text-center"><input type="radio" value="2" name="perf_rating_{{question[0]}}{{postfix}}"></td>
+                                                         <td class="text-center"><input type="radio" value="1" name="perf_rating_{{question[0]}}{{postfix}}" checked required /></td>
+                                                      {% elif answer.answer_value == None %}
+                                                         <td class="text-center"><input type="radio" value="5" name="perf_rating_{{question[0]}}" required></td>
+                                                         <td class="text-center"><input type="radio" value="4" name="perf_rating_{{question[0]}}"></td>
+                                                         <td class="text-center"><input type="radio" value="3" name="perf_rating_{{question[0]}}"></td>
+                                                         <td class="text-center"><input type="radio" value="2" name="perf_rating_{{question[0]}}"></td>
+                                                         <td class="text-center"><input type="radio" value="1" name="perf_rating_{{question[0]}}"></td>
+                                                      {% endif %}
+                                                   {% endif %}
+                                                {% endfor %}
+                                             </tr>
+                                             {% else %}
+                                             <tr>
+                                                <td class="first-col">{{question[2]}}</td>
+                                                <td class="text-center"><input type="radio" value="5" name="perf_rating_{{question[0]}}" required></td>
+                                                <td class="text-center"><input type="radio" value="4" name="perf_rating_{{question[0]}}"></td>
+                                                <td class="text-center"><input type="radio" value="3" name="perf_rating_{{question[0]}}"></td>
+                                                <td class="text-center"><input type="radio" value="2" name="perf_rating_{{question[0]}}"></td>
+                                                <td class="text-center"><input type="radio" value="1" name="perf_rating_{{question[0]}}"></td>
+                                             </tr>
+                                             {% endif %}
+                                          {% endfor %}
+                                       </table>
+                                       <br>
+                                       <h6 class="form-label">If a progress review meeting has taken place in the period covered by this report, have any recommendations from
+                                          that meeting been carried out?</h6>
+                                       <div class="col-md-4">
+                                          <table class="table table-borderless text-sm">
+                                             <tbody>
+                                                {% if supervisor_answer.recommendation_answers %}
+                                                <tr>
+                                                      {% set postfix_rec = "" %}
+                                                      {% for item in yes_no_na_list %}
+                                                      {% if user_type == "administrator" or user_type == "student" %}{% set postfix_rec = '_' + supervisor_answer.supervisor_id[0] | string %}{% endif %}
+                                                         <td>
+                                                            <input 
+                                                               type="radio" 
+                                                               value="{{item[0]}}" 
+                                                               name="recommendation{{postfix_rec}}" 
+                                                               {% if item[0]|string == supervisor_answer.recommendation_answers.answer_value %}
+                                                               checked 
+                                                               {% endif %}
+                                                               />
+                                                            <label class="form-label">{{item[1]}}</label>
+                                                         </td>
+                                                   {% endfor %}
+                                                </tr>
+                                                {% else %}
+                                                <tr>
+                                                   <td><input type="radio" value="1" name="recommendation" required/> Yes</td>
+                                                   <td><input type="radio" value="2" name="recommendation" /> No</td>
+                                                   <td><input type="radio" value="3" name="recommendation" /> N/A</td>
+                                                </tr>
+                                                {% endif %}
+                                             </tbody>
+                                          </table>
+                                       </div>   
+
+                                       <br>
+
+                                       <h6 class="form-label">Comments:</h6>
+                                       <div class="col-md-4">
+                                          
+                                             <textarea 
+                                                name="comments" 
+                                                rows="3" 
+                                                class="form-control form-control-sm" 
+                                                style="width: 100%;">{% if supervisor_answer.supervisor_comment_answers %}{{supervisor_answer.supervisor_comment_answers.answer_value}}{% endif %}</textarea>
+                                          <br>
+                                          <h6 class="form-label">Date:</h6>
+                                          {% if supervisor_answer.supervisor_date_answers %}
+                                          <input type="date" class="form-control form-control-sm" name="date_supervisor" value="{{supervisor_answer.supervisor_date_answers.answer_value}}" rows="1" style="width: 100%;"></input>
+                                          {% else %}
+                                          <input type="date" class="form-control form-control-sm" name="date_supervisor" rows="1" style="width: 100%;"></input>
+                                          {% endif %}
+                                       </div>
+                                    </div>
+                                 {% endif %}
+                              {% endfor %}
+                             {% endif %}
+                              
+                              {% if user_type == 'convenor' or user_type == 'administrator' or user_type == 'student' %}
+                              <br>
+                              <input type="hidden" name="submit_user_type" value="convenor">
+                              <div>
+                                 <h4 class="header-l-primary">
+                                 {% if convenor %}
+                                    Convenor: {{convenor.first_name}} {{convenor.last_name}} 
+                                 {% else %}
+                                    Department/ School PG Convenor
+                                 {% endif %}
+                                 </h4>
+                                 <br>
+                                 <h6 class="form-label">Highlight any area needing closer consideration:</h6>
+                                 <div class="col-md-4">                                    
+                                    <textarea 
+                                       name="highlights" 
+                                       rows="3" 
+                                       class="form-control form-control-sm"
+                                       style="width: 100%;">{% if answer_list.highlight_answers %}{{answer_list.highlight_answers.answer_value}}{% endif %}</textarea>
+                                    <br>
+
+                                    <h6 class="form-label">Date:</h6>
+                                    
+                                    <input 
+                                       type="date" 
+                                       class="form-control form-control-sm" 
+                                       name="date_convenor" 
+                                       {% if answer_list.convenor_date_answers %} value="{{answer_list.convenor_date_answers.answer_value}}" {% endif %}
+                                       rows="1" 
+                                       style="width: 100%;">
+                                    </input>                                    
+                                 </div>
+                                 <br>
+                                 <h6 class="form-label">Overall Status:</h6>
+                                 <div class="col-md-4">
+                                    <table class="table table-borderless text-sm">
+                                       <tbody>
+                                          <tr>
+                                          {% if answer_list.color_rating_answers %}
+                                             {% for item in color_rating_list %}
+                                                
+                                                   <td>
+                                                      <input 
+                                                         type="radio" 
+                                                         value="{{item[0]}}" 
+                                                         name="color_rating" 
+                                                         id="{{item[1]}}" required 
+                                                         {% if item[0]|string == answer_list.color_rating_answers.answer_value %} checked {% endif %}
+                                                      />
+                                                      <label for="green_radio" class="{{item[2]}}"></label>
+                                                   </td>
+                                             {% endfor %}
+                                          </tr>
+                                          {% else %}
+                                          <tr>
+                                             <td>
+                                                <input type="radio" value="1" id="green_radio" name="color_rating" />
+                                                <label for="green_radio" class="color-label green"></label>
+                                             </td>
+                                             <td>
+                                                <input type="radio" value="2" id="orange_radio" name="color_rating" />
+                                                <label for="orange_radio" class="color-label orange"></label>
+                                             </td>
+                                             <td>
+                                                <input type="radio" value="3" id="red_radio" name="color_rating" />
+                                                <label for="red_radio" class="color-label red"></label>
+                                             </td>
+                                          </tr>
+                                          {% endif %}
+                                       </tbody>
+                                    </table>
+                                 </div>
+                              </div>
+                              {% endif %}
+                              <br>
+                              {% if user_type == 'administrator' %}
+                              <h6 class="message-sm-warning">Return this completed report to the Faculty PG Administrator by 14 July</h6>
+                              {% endif %}
+                           </div>
+                        </div>
+                        {% if not user_type == "administrator" and not user_type == "student" and form.is_current == 1 %}
+                           <button type="submit" class="btn btn-sm btn-primary mt-2">Save</button>
+                        {% endif %}
+                     </form>
+                     
+                     <!-- administrator -->
+                     {% if user_type == "administrator" and form.is_convenor_submitted == 1 %} 
+                        {% if not form.is_admin_completed == 1 %}
+                           <button 
+                              type="button" 
+                              data-bs-toggle="modal" 
+                              data-bs-target="#complete_form_modal"
+                              class="btn btn-sm btn-danger">Complete 6MR
+                           </button>
+                        {% endif %}
+                        <!-- submit modal-->
+                        <form action="/form/submit" method="POST">
+                           <input type="hidden" name="form_id" value="{{form.form_id}}">
+                           <input type="hidden" name="student_id" value="{{student_id}}">
+                           <div class="modal fade" id="complete_form_modal" tabindex="-1" aria-labelledby="complete_form_modalLabel" aria-hidden="true">
+                              <div class="modal-dialog">
+                                 <div class="modal-content">
+                                    <div class="modal-header">
+                                       <h1 class="modal-title fs-5" id="complete_form_modalLabel"> 6MR Form Complete - Confirmation </h1>
+                                       <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                       <p>Do you want to complete the 6MR form?</p>
+                                       <p>Email will be sent out to all the relevant parties belong to this form.</p>
+                                    </div>
+                                    <div class="modal-footer">
+                                       <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal"> Cancel </button>
+                                       <button type="submit" class="btn btn-sm btn-danger"> Complete</button>
+                                    </div>
+                                 </div>
+                              </div>
+                           </div>
+                        </form>
+                     {% endif %}
+
+                     <!-- convenor -->
+                     {% if user_type == "convenor" %}
+                        <form action="/form/submit" method="POST">
+                           <input type="hidden" name="form_id" value="{{form_id}}">
+                           {% if not form.is_convenor_submitted == 1 %}
+                           <button type="button" data-bs-toggle="modal" data-bs-target="#submit_modal" class="btn btn-sm btn-danger mt-2">Submit</button>
+                           {% endif %}
+                           
+                           <!-- submit modal-->
+                           <div class="modal fade" id="submit_modal" tabindex="-1" aria-labelledby="submit_modalLabel" aria-hidden="true">
+                              <div class="modal-dialog">
+                                 <div class="modal-content">
+                                    <div class="modal-header">
+                                       <h1 class="modal-title fs-5" id="submit_modalLabel"> 6MR Form Submit - Confirmation </h1>
+                                       <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body"> 
+                                       <p>Do you want to submit the 6MR form?</p>    
+                                       <p>Your form will be sent out to the Administration.</p>
+                                    </div>
+                                    <div class="modal-footer">
+                                       <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal"> Cancel </button>
+                                       <button type="submit" class="btn btn-sm btn-danger"> Submit</button>
+                                    </div>
+                                 </div>
+                              </div>
+                           </div>
+                        </form>
+                     {% endif %}
+                  </div>
+               </div>
+            </div>
+            <div class="card-footer">
+               <a href="/form/section_a?form_id={{form_id}}&student_id={{student_id}}" class="btn btn-sm btn-outline-primary">SECTION A</a>
+               <a href="/form/section_b?form_id={{form_id}}&student_id={{student_id}}" class="btn btn-sm btn-outline-primary">SECTION B</a>
+               <a href="/form/section_c?form_id={{form_id}}&student_id={{student_id}}" class="btn btn-sm btn-outline-primary">SECTION C</a>
+               <a href="/form/section_d?form_id={{form_id}}&student_id={{student_id}}" class="btn btn-sm btn-outline-primary">SECTION D</a>
+               {% if (user_type != 'student' and form.is_supervisor_approved == 1) or (user_type == 'student' and form.is_current == 0)
+               or form.is_admin_completed %} <button class="btn btn-sm btn-primary" disabled>SECTION E </button> {% endif %}
+               {% if user_type == 'chair' or user_type == 'student' %}<a href="/form/section_f?form_id={{form_id}}&student_id={{student_id}}" class="btn btn-sm btn-outline-primary">SECTION F</a>{% endif %}
+            </div>
+         </div>
+      </div>
+   </div>
+</div>
+{% endblock %}

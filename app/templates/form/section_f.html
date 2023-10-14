@@ -1,0 +1,269 @@
+{% extends "layouts/base.html" %} {% block title %}6MR Form - Section F{%
+endblock %} {% block content %}
+<div>
+  <!-- Page Heading -->
+  <div class="page-heading mb-4">
+    {% for message in get_flashed_messages() %}
+    <div class="alert alert-primary alert-dismissible fade show" role="alert">
+      {{ message }}
+      <button
+        type="button"
+        class="btn-close"
+        data-bs-dismiss="alert"
+        aria-label="Close"
+      ></button>
+    </div>
+    {% endfor %}
+    <h2>6MR Form (Draft)</h2>
+  </div>
+
+  <!-- Page Content -->
+  <div class="row">
+    <div class="col-md-12 mb-4">
+      <div class="card">
+        <h5 class="card-header">
+          Section F - Student Assessment of Supervision, Technical and
+          Administrative Support
+        </h5>
+        <div class="card-body">
+          <form action="/form/section_f" method="POST" id="form">
+            <!-- Move the form fields inside the form tag -->
+            <input
+              type="hidden"
+              id="form_id"
+              name="form_id"
+              value="{{form_id}}"
+            />
+            <input
+              type="hidden"
+              id="student_id"
+              name="student_id"
+              value="{{student_id}}"
+            />
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="mb-3">
+                      <label for="comments" class="form-label"
+                        >Comments</label
+                      >
+                      {% if answers[0] %} {% if answers[0].question_id == 86 %}
+                      <textarea
+                        class="form-control"
+                        id="comments"
+                        name="comments"
+                        rows="3"
+                      >{{ answers[0].answer_value }}</textarea>
+                      {% endif %} {% else %}
+                      <textarea
+                        class="form-control"
+                        id="comments"
+                        name="comments"
+                        rows="3"
+                      ></textarea>
+                      {% endif %}
+                    </div>
+                    <div class="mb-3">
+                      <label for="talk_to" class="form-label"
+                        >I want to talk to:</label
+                      >
+                      <div class="checkbox-group required">
+                        <div class="form-check">
+                          {% if answers[1] %} {% if answers[1].question_id == 87
+                          and answers[1].answer_value == "1" %}
+                          <input
+                            class="form-check-input"
+                            type="checkbox"
+                            id="pg_chair"
+                            name="pg_chair"
+                            checked
+                          />
+                          {% else %}
+                          <input
+                            class="form-check-input"
+                            type="checkbox"
+                            id="pg_chair"
+                            name="pg_chair"
+                          />
+                          {% endif %} {% else %}
+                          <input
+                            class="form-check-input"
+                            type="checkbox"
+                            id="pg_chair"
+                            name="pg_chair"
+                          />
+                          {% endif %}
+                          <label class="form-check-label" for="pg_chair"
+                            >Faculty Postgraduate Chair</label
+                          >
+                        </div>
+                        <div class="form-check">
+                          {% if answers[2] %} {% if answers[2].question_id == 88
+                          and answers[2].answer_value == "1" %}
+                          <input
+                            class="form-check-input"
+                            type="checkbox"
+                            id="convenor"
+                            name="pg_convenor"
+                            checked
+                          />
+                          {% else %}
+                          <input
+                            class="form-check-input"
+                            type="checkbox"
+                            id="convenor"
+                            name="pg_convenor"
+                          />
+                          {% endif %} {% else %}
+                          <input
+                            class="form-check-input"
+                            type="checkbox"
+                            id="convenor"
+                            name="pg_convenor"
+                          />
+                          {% endif %}
+                          <label class="form-check-label" for="convenor"
+                            >Academic Administration Convenor</label
+                          >
+                        </div>
+                      </div>
+                    </div>
+                    {% if user_type == 'student' and form.is_current == 1 %}
+                    <button type="submit" class="btn btn-sm btn-primary mt-3">
+                      Save
+                    </button>
+
+                    <div class="col-md-12"> 
+                    {% if not form.is_student_submitted == 1 %} 
+                      <button type="button" data-bs-toggle="modal" data-bs-target="#submit_form_modal" class="btn btn-sm btn-warning mt-3">Submit </button> 
+                    </form>
+                    <form action="/form/submit" method="POST">
+                      <input type="hidden" name="form_id" value="{{ form.form_id }}">
+                      <input type="hidden" name="student_id" value="{{student_id}}">
+                      <div class="modal fade" id="submit_form_modal" tabindex="-1" aria-labelledby="submit_form_modalLabel"
+                        aria-hidden="true">
+                        <div class="modal-dialog">
+                          <div class="modal-content">
+                            <div class="modal-header">
+                              <h1 class="modal-title fs-5" id="submit_form_modalLabel"> 6MR Form Submission - Confirmation </h1>
+                              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                              <p>Do you want to submit the 6MR form?</p>
+                              <p>Email will be sent out to your principal supervisor.</p>
+                            </div>
+                            <div class="modal-footer">
+                              <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal"> Cancel </button>
+                              <button type="submit" class="btn btn-sm btn-primary"> Submit</button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </form>
+                    {% endif %}
+                    </div>
+                    {% endif %}
+                  </div>
+                </div>
+              </div>
+              {% if user_type == "chair" %}
+              <div class="col-md-4">
+                <div id="user_type" class="display d-none">{{user_type}}</div>
+                <label for="feedback" class="form-label"
+                  >Provide Feedback<span class="required-field">*</span></label
+                >
+                <textarea
+                  class="form-control"
+                  id="feedback"
+                  name="feedback"
+                  rows="3"
+                ></textarea>
+                <!-- Button trigger modal -->
+                <button
+                  type="button"
+                  class="btn btn-sm btn-outline-warning m-1"
+                  data-bs-toggle="modal"
+                  data-bs-target="#feedbackModal"
+                >
+                  Send
+                </button>
+
+                <!-- Modal -->
+                <div
+                  class="modal fade"
+                  id="feedbackModal"
+                  tabindex="-1"
+                  aria-labelledby="exampleModalLabel"
+                  aria-hidden="true"
+                >
+                  <div class="modal-dialog">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="exampleModalLabel">
+                          Send Feedback
+                        </h1>
+                        <button
+                          type="button"
+                          class="btn-close"
+                          data-bs-dismiss="modal"
+                          aria-label="Close"
+                        ></button>
+                      </div>
+                      <div class="modal-body">
+                        Are you sure you want to submit feedback regarding the
+                        form?
+                      </div>
+                      <div class="modal-footer">
+                        <button
+                          type="button"
+                          class="btn btn-secondary"
+                          data-bs-dismiss="modal"
+                        >
+                          Close
+                        </button>
+                        <form action="/form/submit" method="POST">
+                          <!-- Include your form fields here -->
+                          <button type="submit" class="btn btn-primary">
+                            Send
+                          </button>
+                        </form>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              {% endif %}
+            </div>
+        </div>
+        <div class="card-footer">
+          <a
+            href="/form/section_a?form_id={{form_id}}&student_id={{student_id}}"
+            class="btn btn-sm btn-outline-primary"
+            >SECTION A</a
+          >
+          <a
+            href="/form/section_b?form_id={{form_id}}&student_id={{student_id}}"
+            class="btn btn-sm btn-outline-primary"
+            >SECTION B</a
+          >
+          <a
+            href="/form/section_c?form_id={{form_id}}&student_id={{student_id}}"
+            class="btn btn-sm btn-outline-primary"
+            >SECTION C</a
+          >
+          <a
+            href="/form/section_d?form_id={{form_id}}&student_id={{student_id}}"
+            class="btn btn-sm btn-outline-primary"
+            >SECTION D</a
+          >
+          {% if (user_type != 'student' and form.is_supervisor_approved == 1) or (user_type == 'student' and form.is_current == 0) or form.is_admin_completed %}
+            <a href="/form/section_e?form_id={{form_id}}&student_id={{student_id}}" class="btn btn-sm btn-outline-primary" >SECTION E</a>
+          {% endif %}
+          <button class="btn btn-sm btn-primary" disabled>SECTION F</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

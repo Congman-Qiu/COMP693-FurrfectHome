@@ -1,0 +1,217 @@
+{% extends "layouts/base.html" %} {% block title %} Update my profile {% endblock %} {% block content %}
+<!-- Page Heading -->
+<div class="page-heading mb-4"> {% with message = get_flashed_messages(with_categories=true) %} {% if message %} {% for
+    category, message in message %} {% if category =='danger' %} <div
+        class="alert alert-danger alert-dismissible fade show" role="alert"> {{ message }} <button type="button"
+            class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div> {% else %} <div class="alert alert-primary alert-dismissible fade show" role="alert"> {{ message }} <button
+            type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div> {% endif %} {% endfor %} {% endif %} {% endwith %} <h2>Student Details</h2>
+</div>
+<div class="row">
+    <div class="col-md-12 mb-4">
+        <div class="card">
+            <div class="card-header">Student Details</div>
+            <input type="hidden" class="form-control" id="student_id" name="student_id"
+                value="{{personal_details.student_id}}" />
+            <div class="card-body">
+                <form action="/student/update" method="post">
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item">
+                            <h5 class="m-2">Personal Details</h5>
+                            <div class="row mt-1">
+                                <div class="col-md-6">
+                                    <label for="first_name" class="form-label">First Name<span
+                                            class="required-field">*</span></label>
+                                    <input type="text" class="form-control" id="first_name" name="first_name"
+                                        value="{{personal_details.student_first_name}}" pattern="[A-Za-z]+" required />
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="last_name" class="form-label">Last Name<span
+                                            class="required-field">*</span></label>
+                                    <input type="text" class="form-control" id="last_name" name="last_name"
+                                        value="{{personal_details.student_last_name}}" pattern="[A-Za-z]+" required />
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="phone_number" class="form-label">Phone Number<span
+                                            class="required-field">*</span></label>
+                                    <input pattern="[0-9]+" type="text" class="form-control" id="phone_number"
+                                        name="phone_number" value="{{personal_details.phone}}" required />
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="address" class="col-sm-12 form-label">Address<span
+                                            class="required-field">*</span></label>
+                                    <input type="text" name="address" id="address" class="form-control"
+                                        value="{{personal_details.address}}" required />
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="enrol_date" class="form-label">Enrolment Date<span
+                                            class="required-field">*</span></label>
+                                    <input type="Date" class="form-control" id="enrol_date" name="enrol_date"
+                                        value="{{personal_details.enrolment_date}}" required />
+                                </div>
+                            </div>
+                        </li>
+                        <!-- employment part -->
+                        <input type="hidden" id="employment_details_len" name="employment_details_len"
+                            value="{{employment_details_len}}">
+                        <input type="hidden" name="employmentCount" id="employmentCount"
+                            value="{{ employmentCount }}" />
+                        <input type="hidden" name="stu_id" id="stu_id" value="{{personal_details.student_id}}" />
+                        <li class="list-group-item"> {% if employment_details %} <h5 class="m-2">Employment at LU</h5>
+                            <div class="row flex justify-content-center">
+                                <!-- if there're employment --> {% for detail in employment_details %} <div
+                                    class="update-box row">
+                                    <div>
+                                        <input type="hidden" name="employment_id{{ loop.index }}"
+                                            id="employment_id{{ loop.index }}" {% if detail.employment_id %}
+                                            value="{{ detail.employment_id }}" {% else %} value="" {% endif %} />
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="employment_type{{ loop.index }}"
+                                            class="col-sm-12 form-label">Employment Type</label>
+                                        <input type="text" name="employment_type{{ loop.index }}"
+                                            id="employment_type{{ loop.index }}" class="form-control" {% if
+                                            detail.employment_type %} value="{{ detail.employment_type }}" {% else %}
+                                            value="" {% endif %} />
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="supervisor_name{{ loop.index }}"
+                                            class="col-sm-12 form-label">Supervisor Name</label>
+                                        <input type="text" name="supervisor_name{{ loop.index }}"
+                                            id="supervisor_name{{ loop.index }}" class="form-control" {% if
+                                            detail.supervisor_name %} value="{{ detail.supervisor_name }}" {% else %}
+                                            value="" {% endif %} />
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="hours_per_week{{ loop.index }}" class="col-sm-12 form-label">Hours
+                                            per Week</label>
+                                        <input type="number" min="0" name="hours_per_week{{ loop.index }}"
+                                            id="hours_per_week{{ loop.index }}" class="form-control" {% if
+                                            detail.hours_per_week %} value="{{ detail.hours_per_week }}" {% else %}
+                                            value="" {% endif %} />
+                                    </div>
+                                </div> {% endfor %} {% endif %}
+                            </div>
+                        </li>
+                        <!-- scholarship part -->
+                        <input type="hidden" id="scholarship_details_len" name="scholarship_details_len"
+                            value="{{scholarship_details_len}}">
+                        <input type="hidden" name="scholarshipCount" id="scholarshipCount"
+                            value="{{ scholarshipCount }}" />
+                        <input type="hidden" name="stu_id" id="stu_id" value="{{personal_details.student_id}}" />
+                        <li class="list-group-item"> {% if scholarship_details %} <h5 class="m-2">Scholarship Details
+                            </h5>
+                            <div class="row flex justify-content-center">
+                                <!-- if there're sholarship history --> {% for details in scholarship_details %} <div
+                                    class="update-box row">
+                                    <div>
+                                        <div class="delete-btn btn btn-outline-warning btn-sm" onclick="deleteField()">
+                                            Delete </div>
+                                        <input type="hidden" name="sch_id{{ loop.index }}" id="sch_id{{ loop.index }}"
+                                            {% if details.scholarship_id %} value="{{ details.scholarship_id }}" {% else
+                                            %} value="" {% endif %} />
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="sch_name{{ loop.index }}" class="col-sm-12 form-label">Scholarship
+                                            Name</label>
+                                        <input type="text" name="sch_name{{ loop.index }}" id="sch_name{{ loop.index }}"
+                                            class="form-control" {% if details.scholarship_name %}
+                                            value="{{ details.scholarship_name }}" {% else %} value="" {% endif %} />
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="sch_value{{ loop.index }}" class="col-sm-12 form-label">Scholarship
+                                            Value (NZD)</label>
+                                        <input type="number" min="0" name="sch_value{{ loop.index }}"
+                                            id="sch_value{{ loop.index }}" class="form-control" {% if details.value %}
+                                            value="{{ details.value }}" {% else %} value="" {% endif %} />
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="sch_start_date{{ loop.index }}"
+                                            class="col-sm-12 form-label">Scholarship Tenure</label>
+                                        <input type="date" name="sch_start_date{{ loop.index }}"
+                                            id="sch_start_date{{ loop.index }}" class="form-control" {% if
+                                            details.tenure %} value="{{ details.tenure }}" {% else %} value="" {% endif
+                                            %} />
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="sch_end_date{{ loop.index }}"
+                                            class="col-sm-12 form-label">Scholarship End Date</label>
+                                        <input type="date" name="sch_end_date{{ loop.index }}"
+                                            id="sch_end_date{{ loop.index }}" class="form-control" {% if
+                                            details.end_date %} value="{{ details.end_date }}" {% else %} value="" {%
+                                            endif %} />
+                                    </div>
+                                </div> {% endfor %} {% endif %}
+                            </div>
+                        </li>
+                    </ul>
+                </form> {% if personal_details %} {% if user_type == "administrator" %} <button type="button"
+                    class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#ApproveModal"> Approve
+                </button>
+                <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal"
+                    data-bs-target="#DeclineModal"> Decline </button>
+                <a class="btn btn-sm btn-secondary" href="{{ url_for('dashboard') }}">Dashboard</a> {% endif %}
+                <!-- Approve Modal -->
+                <div class="modal" id="ApproveModal">
+                    <form action="/student/approve" method="POST">
+                        <input id="student_id" name="student_id" value="{{personal_details.student_id}}" hidden />
+                        <input type="hidden" value="approve" name="approve_reject" />
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <!-- Modal Header -->
+                                <div class="modal-header">
+                                    <h4 class="modal-title">Approve new student</h4>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                </div>
+                                <!-- Modal body -->
+                                <div class="modal-body"> Please confirm if you want to approve this new student! </div>
+                                <!-- Modal footer -->
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">
+                                        Close </button>
+                                    <button type="submit" value="Submit" name="submit" class="btn btn-sm btn-primary">
+                                        Confirm </button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <!-- Reject Modal -->
+                <div class="modal" id="DeclineModal">
+                    <form action="/student/approve" method="POST">
+                        <input id="student_id" name="student_id" value="{{personal_details.student_id}}" hidden />
+                        <input type="hidden" value="reject" name="approve_reject" />
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <!-- Modal Header -->
+                                <div class="modal-header">
+                                    <h4 class="modal-title">Send a Decline Message</h4>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                </div>
+                                <!-- Modal Body -->
+                                <div class="modal-body">
+                                    <div class="mb-3">
+                                        <label for="message" class="col-sm-12 form-label">Message<span
+                                                class="required-field">*</span></label>
+                                        <div class="col-md-6">
+                                            <input type="message" name="message" id="message" class="form-control"
+                                                required />
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Modal Footer -->
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">
+                                        Close </button>
+                                    <button type="submit" value="Submit" name="submit" class="btn btn-primary"> Confirm
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div> {% endif %}
+            </div>
+        </div>
+    </div>
+</div> {% endblock %} {% block script %} {% endblock %}

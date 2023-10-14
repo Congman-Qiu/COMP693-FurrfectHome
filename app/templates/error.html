@@ -1,0 +1,7 @@
+{% extends "layouts/base.html" %} {% block title %} Error {% endblock %} {% block content %} 
+<div>
+    {% if error_message %}
+    <h5 class="text-danger">{{error_message}}</h5>
+    {% endif %}
+</div> 
+{% endblock %}

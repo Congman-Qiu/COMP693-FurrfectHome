@@ -1,0 +1,205 @@
+{% extends "layouts/base.html" %} {% block title %} Students {% endblock %} {%
+block content %}
+<div>
+  <!-- Page Heading -->
+  <div class="page-heading mb-4">
+    {% for message in get_flashed_messages() %}
+    <div class="alert alert-primary alert-dismissible fade show" role="alert">
+      {{ message }}
+      <button
+        type="button"
+        class="btn-close"
+        data-bs-dismiss="alert"
+        aria-label="Close"
+      ></button>
+    </div>
+    {% endfor %}
+    <h2>Students</h2>
+  </div>
+  <!-- Page Content -->
+
+  {% if not students %}
+  <span class="news-empty">No results</span>
+  {% else %}
+  <div class="card">
+    <div class="card-header">All Students</div>
+    <div class="card-body">
+      <table class="table" id="myTable">
+        <thead>
+          <tr>
+            <th>Student ID</th>
+            <th>Department</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Enrolment Date</th>
+            <th>Supervisors</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for student in students %}
+          <tr>
+            <td>{{ student.student_id }}</td>
+            <td>{{ student.department_name }}</td>
+            <td>
+              {{ student.student_first_name }} {{ student.student_last_name }}
+            </td>
+            <td>{{ student.email }}</td>
+            <td>
+              {% if student.enrolment_date %}{{ student.enrolment_date }}{%
+              endif %}
+            </td>
+            <td>
+              {% if student.supervisors|length > 0 %} {% for sup in
+              student.supervisors %} {{ sup.first_name }} {{ sup.last_name }} {%
+              if not loop.last %}, {% endif %} {% endfor %} {% else %}
+              <span></span>
+              {% endif %}
+            </td>
+            <td>
+              <div class="table-button-group">
+                {% if user_type == "administrator" %}
+                <a
+                  href="/student/update?student_id={{ student.student_id }}"
+                  class="btn btn-sm btn-primary"
+                  >Edit</a
+                >
+                {% endif %} {% if user_type == "chair" or user_type ==
+                "convenor" or user_type == "administrator" %}
+                <button
+                  type="button"
+                  class="btn btn-primary btn-sm"
+                  data-bs-toggle="modal"
+                  data-bs-target="#view_student{{ student.student_id }}"
+                >
+                  View Profile
+                </button>
+              </div>
+              <!-- Modal -->
+              <div
+                class="modal fade"
+                id="view_student{{ student.student_id }}"
+                tabindex="-1"
+                aria-labelledby="view_studentLabel"
+                aria-hidden="true"
+              >
+                <div class="modal-dialog modal-lg">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h1 class="modal-title fs-5" id="view_studentLabel">
+                        {{ student.student_first_name }} {{
+                        student.student_last_name }}
+                      </h1>
+                      <button
+                        type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal"
+                        aria-label="Close"
+                      ></button>
+                    </div>
+                    <!-- modal body student full detail-->
+                    <div class="modal-body">
+                      <div class="card">
+                        <ul class="list-group list-group-flush">
+                          <li class="list-group-item">
+                            <!-- personal details field -->
+                            <h6>Personal Details</h6>
+                            <div>
+                              Name: {{ student.student_first_name }} {{
+                              student.student_last_name }}
+                            </div>
+                            <div>
+                              Enrolment Date: {% if student.enrolment_date %}{{
+                              student.enrolment_date.strftime("%d/%m/%Y") }}{%
+                              endif %}
+                            </div>
+                            <div>Department: {{ student.department_name }}</div>
+                            <div>Email: {{ student.email }}</div>
+                            <div>Contact Number: {{ student.phone }}</div>
+                            <div>Address: {{ student.address }}</div>
+                          </li>
+                          <li class="list-group-item">
+                            <!-- employment details field -->
+                            <h6>Employment Details</h6>
+                            {% if student.employment | length > 0 %} {% for emp
+                            in student.employment %}
+                            <div class="employment-section">
+                              <div class="table-format">
+                                <p>Employment Type</p>
+                                <div>{{ emp.employment_type }}</div>
+                              </div>
+                              <div class="table-format">
+                                <p>Supervisor Name</p>
+                                <div>{{ emp.supervisor_name }}</div>
+                              </div>
+                              <div class="table-format">
+                                <p>Hours per Week</p>
+                                <div>{{ emp.hours_per_week }}</div>
+                              </div>
+                            </div>
+                            {% endfor %} {% else %}
+                            <div>No employment records found.</div>
+                            {% endif %}
+                          </li>
+                          <li class="list-group-item">
+                            <h6>Scholarship Details</h6>
+                            <!-- scholarship details field -->
+                            {% if student.scholarships | length > 0 %}
+                            <table class="table">
+                              <thead>
+                                <tr>
+                                  <th>Name</th>
+                                  <th>Value</th>
+                                  <th>Tenure</th>
+                                  <th>End date</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {% for scholarship in student.scholarships %}
+                                <tr>
+                                  <td>{{ scholarship.scholarship_name }}</td>
+                                  <td>{{ scholarship.value }}</td>
+                                  <td>{{ scholarship.tenure }}</td>
+                                  <td>{{ scholarship.end_date }}</td>
+                                </tr>
+                                {% endfor %}
+                              </tbody>
+                            </table>
+                            {% else %}
+                            <div>No scholarship records found.</div>
+                            {% endif %}
+                          </li>
+                        </ul>
+                      </div>
+                    </div>
+                    <div class="modal-footer">
+                      <button
+                        type="button"
+                        class="btn btn-primary"
+                        data-bs-dismiss="modal"
+                      >
+                        Close
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              {% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}{% block script %}
+<script>
+  $(document).ready(function () {
+    $("#myTable").DataTable({
+      columnDefs: [{ targets: [6], orderable: false }],
+    });
+  });
+</script>
+{% endblock %}

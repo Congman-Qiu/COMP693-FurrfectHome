@@ -1,0 +1,203 @@
+/*
+    COMP693 - Independent Learning Project
+    Congman Qiu 1153258
+    FurrfectHome- theme
+*/
+
+.card-header {
+  background: #dbaab3 !important;
+  color: #fff !important;
+  font-weight: bold !important;
+  text-transform: uppercase !important;
+  font-size: medium !important;
+}
+
+.btn-primary {
+  background: #dbaab3 !important;
+  border: 1px solid #dbaab3 !important;
+  color: #fff !important;
+}
+
+.btn-primary:hover {
+  background: #ffffff !important;
+  border: 1px solid #dbaab3 !important;
+  color: #dbaab3 !important;
+}
+
+.btn-warning {
+  background: #fe9c2f !important;
+  border: 1px solid #fe9c2f !important;
+  color: #fff !important;
+}
+
+.btn-warning:hover {
+  background: #ffffff !important;
+  border: 1px solid #fe9c2f !important;
+  color: #fe9c2f !important;
+}
+
+.btn-outline-primary {
+  background: #ffffff !important;
+  border: 1px solid #dbaab3 !important;
+  color: #dbaab3 !important;
+}
+
+.btn-outline-primary:hover {
+  background: #dbaab3 !important;
+  border: 1px solid #e8c6dc !important;
+  color: #fff !important;
+}
+
+.lf-navbar {
+  background-color: #f8f2ff !important;
+  border-radius: 5px !important;
+  border: 1px solid #ccc !important;
+}
+
+.form-control {
+  border: 1px solid #e7ecff !important;
+}
+
+.form-control:focus {
+  color: #212529 !important;
+  background-color: #fff !important;
+  border-color: #e7ecff !important;
+  outline: 0 !important;
+  box-shadow: 0 0 0 0.25rem #dcdcff !important;
+}
+
+.site-title-home {
+  color: #dbaab3 !important;
+}
+
+.site-subtitle-home {
+  color: #fe9c2f !important;
+}
+
+.navbar {
+  background: #dbaab3 !important;
+  border: 1px solid #dbaab3 !important;
+}
+
+.navbar-brand {
+  color: #fff !important;
+}
+
+.navbar-brand:hover {
+  color: #b8d4ff !important;
+}
+
+.nav-link {
+  color: #fff !important;
+}
+
+.nav-link:hover {
+  color: #b8d4ff !important;
+}
+
+.form-label {
+  color: #757575 !important;
+  font-size: small !important;
+}
+
+.lf-link {
+  color: #e8c6dc !important;
+  text-decoration: none !important;
+}
+
+.lf-link:hover {
+  color: #b8d4ff !important;
+  text-decoration: none !important;
+}
+
+.header-l-primary {
+  padding: 10px !important;
+  background: aliceblue !important;
+  border-radius: 5px !important;
+  color: #dbaab3 !important;
+  font-weight: 500 !important;
+  font-size: large !important;
+}
+
+.header-m-primary {
+  padding: 8px !important;
+  background: aliceblue !important;
+  border-radius: 5px !important;
+  color: #dbaab3 !important;
+  font-weight: 500 !important;
+  font-size: medium !important;
+}
+
+.message-sm-primary {
+  padding: 5px 10px !important;
+  background: aliceblue !important;
+  border-radius: 4px !important;
+  color: #dbaab3 !important;
+  font-weight: 100 !important;
+  font-size: small !important;
+}
+
+.message-sm-warning {
+  padding: 5px 10px !important;
+  background: beige !important;
+  border-radius: 4px !important;
+  color: #c88e1d !important;
+  font-weight: 100 !important;
+  font-size: small !important;
+}
+
+.message-sm-danger {
+  padding: 5px 10px !important;
+  background: #ffdede !important;
+  border-radius: 4px !important;
+  color: red !important;
+  font-weight: 100 !important;
+  font-size: small !important;
+}
+
+.icon-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  align-items: center !important;
+  gap: 20px !important;
+}
+
+.icon {
+  display: flex !important;
+  gap: 20px !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+  align-items: center !important;
+  height: 120px;
+  width: 120px;
+  padding-top: 11px !important;
+  border: 1px solid #ccc !important;
+}
+
+.icon-cap {
+  font-size: small !important;
+}
+
+/* Datatable styles override */
+
+.active > .page-link,
+.page-link.active {
+  z-index: 3;
+  color: #fff !important;
+  background-color: #dbaab3 !important;
+  border-color: #dbaab3 !important;
+}
+
+.page-link {
+  position: relative;
+  display: block;
+  padding: var(--bs-pagination-padding-y) var(--bs-pagination-padding-x);
+  font-size: var(--bs-pagination-font-size);
+  color: #dbaab3 !important;
+  text-decoration: none;
+  background-color: var(--bs-pagination-bg);
+  border: var(--bs-pagination-border-width) solid
+    var(--bs-pagination-border-color);
+  transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out,
+    border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}

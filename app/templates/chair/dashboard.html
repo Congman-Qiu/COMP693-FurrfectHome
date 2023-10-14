@@ -1,0 +1,84 @@
+{% extends "layouts/base.html" %} {% block title %} Dashboard {% endblock %} {%
+block content %}
+<div>
+  <!-- Page Heading -->
+  <div class="page-heading mb-4">
+    {% for message in get_flashed_messages()%}
+    <div class="alert alert-primary alert-dismissible fade show" role="alert">
+      {{ message }}
+      <button
+        type="button"
+        class="btn-close"
+        data-bs-dismiss="alert"
+        aria-label="Close"
+      ></button>
+    </div>
+    {% endfor %}
+    <h2>Dashboard</h2>
+  </div>
+  <!-- Page Content -->
+  <div class="row">
+    <div class="col-md-6 mb-4">
+      <div class="card">
+        <h5 class="card-header">Supervisors and Students</h5>
+        <div class="card-body">
+          <div class="row mb-3">
+            <div class="col-md-12">
+              <div class="icon-container">
+                <a
+                  href="/supervisor/supervisors/all"
+                  class="icon btn btn-sm btn-outline-primary mt-3"
+                >
+                  <i class="fa-solid fa-user fa-xl"></i>
+                  <div class="icon-cap">Supervisors</div>
+                </a>
+                <a
+                  href="/student/students"
+                  class="icon btn btn-sm btn-outline-primary mt-3"
+                >
+                  <i class="fa-solid fa-graduation-cap fa-xl"></i>
+                  <div class="icon-cap">Students</div>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6 mb-4">
+      <div class="card">
+        <h5 class="card-header">6MR Form</h5>
+        <div class="card-body">
+          <div class="row mb-3">
+            <div class="col-md-12">
+              <div class="icon-container">
+                <a
+                  href="{{url_for('chair_manage_students_form')}}"
+                  class="icon btn btn-sm btn-outline-primary mt-3"
+                >
+                  <i class="fa-sharp fa-solid fa-check-to-slot fa-xl"></i>
+                  <div class="icon-cap">Manage Student Forms</div>
+                </a>
+                <a
+                  href="/form/current_forms"
+                  class="icon btn btn-sm btn-outline-primary mt-3"
+                >
+                  <i class="fa-solid fa-chalkboard-user fa-xl"></i>
+                  <div class="icon-cap">Current 6MR Forms</div>
+                </a>
+                <a
+                  href="/report/historical_forms"
+                  class="icon btn btn-sm btn-outline-primary mt-3"
+                >
+                  <i class="fa-sharp fa-solid fa-box-archive fa-xl"></i>
+                  <div class="icon-cap">Previous 6MR Forms</div>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

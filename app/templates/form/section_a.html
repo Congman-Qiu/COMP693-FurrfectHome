@@ -1,0 +1,283 @@
+{% extends "layouts/base.html" %} {% block title %} 6MR Form - Section A {%
+endblock %} {% block content %}
+<div>
+  <!-- Page Heading -->
+  <div class="page-heading mb-4">
+    {% for message in get_flashed_messages()%}
+    <div class="alert alert-primary alert-dismissible fade show" role="alert">
+      {{ message }}
+      <button
+        type="button"
+        class="btn-close"
+        data-bs-dismiss="alert"
+        aria-label="Close"
+      ></button>
+    </div>
+    {% endfor %}
+    <h2>6MR Form (Draft)</h2>
+  </div>
+  <!-- Page Content -->
+  <div class="row">
+    <div class="col-md-12 mb-4">
+      <div class="card">
+        <h5 class="card-header">Section A - Student Record</h5>
+        <div class="card-body">
+          <div class="row mb-3">
+            <div class="col-md-12">
+              <div class="row">
+                <div class="col-md-6">
+                  <table class="table table-borderless">
+                    <tr>
+                      <td>Student ID</td>
+                      <td>
+                        <span class="badge bg-secondary"
+                          >{{student.student_id}}</span
+                        >
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>Enrolled On</td>
+                      <td>
+                        <span class="badge bg-secondary"
+                          >{{student.enrolment_date}}</span
+                        >
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>Email</td>
+                      <td>
+                        <span class="badge bg-secondary"
+                          >{{student.email}}</span
+                        >
+                      </td>
+                    </tr>
+                  </table>
+
+                  <form action="/form/section_a" method="POST">
+                    <input
+                      type="hidden"
+                      id="form_id"
+                      name="form_id"
+                      value="{{form_id}}"
+                    />
+                    <div class="col-md-6">
+                      <div class="mb-3">
+                        <label for="address" class="form-label"
+                          >Address<span class="required-field">*</span></label
+                        >
+                        {% if user_type == 'student' %} {% if student.address%}
+                        <input
+                          type="text"
+                          id="address"
+                          name="address"
+                          value="{{ student.address}}"
+                          class="form-control form-control-sm"
+                          placeholder="{{ student.address }}"
+                        />
+                        {% else %}
+                        <input
+                          type="text"
+                          id="address"
+                          name="address"
+                          class="form-control form-control-sm"
+                          placeholder="Address"
+                        />
+                        {% endif %} {% else %}
+                        <input
+                          type="text"
+                          id="address"
+                          name="address"
+                          value="{{ student.address}}"
+                          disabled
+                          class="form-control form-control-sm"
+                          placeholder="{{ student.address }}"
+                        />
+                        {% endif %}
+                      </div>
+                      <div class="mb-3">
+                        <label for="phone" class="form-label"
+                          >Phone<span class="required-field">*</span></label
+                        >
+                        {% if user_type == 'student' %} {% if student.phone %}
+                        <input
+                          type="text"
+                          id="phone"
+                          name="phone"
+                          value="{{ student.phone}}"
+                          class="form-control form-control-sm"
+                          placeholder="{{ student.phone }}"
+                        />
+                        {% else %}
+                        <input
+                          type="text"
+                          id="phone"
+                          name="phone"
+                          class="form-control form-control-sm"
+                          placeholder="phone"
+                        />
+                        {% endif %} {% else %}
+                        <input
+                          type="text"
+                          id="phone"
+                          name="phone"
+                          value="{{ student.phone}}"
+                          disabled
+                          class="form-control form-control-sm"
+                          placeholder="{{ student.phone }}"
+                        />
+                        {% endif %}
+                      </div>
+                      <div class="mb-3">
+                        <label for="thesis_title" class="form-label"
+                          >Thesis Title<span class="required-field"
+                            >*</span
+                          ></label
+                        >
+                        {% if user_type == 'student' %} {% if
+                        student.thesis_title %}
+                        <input
+                          type="text"
+                          id="thesis_title"
+                          name="thesis_title"
+                          value="{{ student.thesis_title}}"
+                          class="form-control form-control-sm"
+                          placeholder="{{ student.thesis_title }}"
+                        />
+                        {% else %}
+                        <input
+                          type="text"
+                          id="thesis_title"
+                          name="thesis_title"
+                          class="form-control form-control-sm"
+                          placeholder="Thesis Title"
+                        />
+                        {% endif %} {% else %} {% set thesis_title = '' %} {% if
+                        student.thesis_title %} {% set thesis_title =
+                        student.thesis_title %} {% endif %}
+                        <input
+                          type="text"
+                          id="thesis_title"
+                          name="thesis_title"
+                          value="{{ thesis_title }}"
+                          disabled
+                          class="form-control form-control-sm"
+                          placeholder="{{ thesis_title }}"
+                        />
+                        {% endif %}
+                      </div>
+                    </div>
+                    {% if user_type == 'student' and form.is_current == 1  %}
+                    <button type="submit" class="btn btn-sm btn-primary mt-3">
+                      Save
+                    </button>
+                    {% endif %}
+                  </form>
+                </div>
+                <div class="col-md-6">
+                  <h6><b>Supervision Team</b></h6>
+                  <hr />
+                  {% if supervisors %}
+                  <table class="table table-sm">
+                    <tbody>
+                      {% for supervisor in supervisors %}
+                      <tr>
+                        <td>{{supervisor.supervisor_type | capitalize}}</td>
+                        <td>{{supervisor.first_name}} {{supervisor.last_name}}<span></span></td>
+                      </tr>
+                      {% endfor %}
+                    </tbody>
+                  </table>
+                  {% else %}
+                  <span class="message-sm-warning">No supervisors assigned</span>
+                  {% endif %}
+
+                  <h6><b>Scholarships</b></h6>
+                  <hr />
+                  {% if scholarships %}
+                  <table class="table table-sm">
+                    <thead>
+                      <tr>
+                        <th scope="col">Name</th>
+                        <th scope="col">Value</th>
+                        <th scope="col">Tenure</th>
+                        <th scope="col">End Date</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {% for scholarship in scholarships %}
+                      <tr>
+                        <td>{{scholarship.scholarship_name}}</td>
+                        <td>{{scholarship.value}}</td>
+                        <td>{{scholarship.tenure}}</td>
+                        <td>{{scholarship.end_date}}</td>
+                      </tr>
+                      {% endfor %}
+                    </tbody>
+                  </table>
+                  {% else %}
+                  <span class="message-sm-warning">No scholarships granted</span>
+                  {% endif %}
+
+                  <h6 class="mt-3"><b>Employment</b></h6>
+                  <hr />
+                  {% if employment %}
+                  <table class="table table-sm">
+                    <thead>
+                      <tr>
+                        <th scope="col">Employment_type</th>
+                        <th scope="col">Supervisor Name</th>
+                        <th scope="col">Hours_per_week</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {% for emp in employment %}
+                      <tr>
+                        <td>{{emp.employment_type}}</td>
+                        <td>{{emp.supervisor_name}}</td>
+                        <td>{{emp.hours_per_week}}</td>
+                      </tr>
+                      {% endfor %}
+                    </tbody>
+                  </table>
+                  {% else %}
+                  <span class="message-sm-warning">No employment enrolled</span>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="card-footer">
+          <button class="btn btn-sm btn-outline-primary" disabled>
+            SECTION A
+          </button>
+          <a
+            href="/form/section_b?form_id={{form_id}}&student_id={{student_id}}"
+            class="btn btn-sm btn-outline-primary"
+            >SECTION B</a
+          >
+          <a
+            href="/form/section_c?form_id={{form_id}}&student_id={{student_id}}"
+            class="btn btn-sm btn-outline-primary"
+            >SECTION C</a
+          >
+          <a
+            href="/form/section_d?form_id={{form_id}}&student_id={{student_id}}"
+            class="btn btn-sm btn-outline-primary"
+            >SECTION D</a
+          >
+          {% if (user_type != 'student' and form.is_supervisor_approved == 1) or (user_type == 'student' and form.is_current == 0) or form.is_admin_completed %}
+            <a href="/form/section_e?form_id={{form_id}}&student_id={{student_id}}" class="btn btn-sm btn-outline-primary" >SECTION E</a>
+          {% endif %}
+
+          {% if user_type == 'chair' or user_type == 'student' %}<a
+            href="/form/section_f?form_id={{form_id}}&student_id={{student_id}}"
+            class="btn btn-sm btn-outline-primary"
+            >SECTION F</a
+          >{% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

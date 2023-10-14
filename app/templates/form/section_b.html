@@ -1,0 +1,226 @@
+{% extends "layouts/base.html" %} {% block title %} 6MR Form - Section B {% endblock %} {% block content %} 
+<div>
+   <!-- Page Heading -->
+    <div class="page-heading mb-4"> {% for message in get_flashed_messages()%} <div
+            class="alert alert-primary alert-dismissible fade show" role="alert"> {{ message }} <button type="button"
+                class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div> {% endfor %} <h2>6MR Form (Draft)</h2>
+    </div>
+
+   <!-- Page Content -->
+   <div class="row">
+      <div class="col-md-12 mb-4">
+         <div class="card">
+            <h5 class="card-header">Section B - Milestones</h5>
+            <div class="card-body">
+                <div class="row mb-3">
+                    <div class="col-md-12">
+                        <form action="/form/section_b" method="POST">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="page-heading mb-4">
+                                        <input type="hidden" id="form_id" name="form_id" value="{{form_id}}">
+                                        <input type="hidden" id="part_1_questions_count" value="{{questions_part_1 | length}}">
+                                        <h6>1. Please put check in the “not completed” box where applicable or give date of completion where appropriate in
+                                            the related box</h6>
+                                        <table class="table" id="part_1_table">
+                                            <thead>
+                                                <tr>
+                                                    <th></th>
+                                                    <th class="text-center">Not Completed</th>
+                                                    <th class="text-center">Completed Date</th>
+                                                </tr>
+                                            </thead>
+                                            {% for question in questions_part_1 %}
+                                            <tr>
+                                                <td class="first-col">{{question[2]}}</td>
+                                                <td class="text-center">
+                                                    {% if answers_part_1 %}
+                                                        {% for answer in answers_part_1 %}
+                                                            {% if answer.question_id == question[0] %}
+                                                            <input 
+                                                                type="checkbox" 
+                                                                class="form-check-input not-completed" 
+                                                                id="not_completed_{{question[0]}}" 
+                                                                {% if answer.answer_value == "1" %} checked {% endif %}
+                                                                name="nc_{{question[0]}}">
+                                                            {% endif %}
+                                                        {% endfor %}
+                                                    {% else %}
+                                                        <input type="checkbox" class="form-check-input not-completed" id="not_completed_{{question[0]}}" name="nc_{{question[0]}}">
+                                                    {% endif %}
+                                                </td>
+                                                <td class="text-center">
+                                                    {% if answers_part_1 %}
+                                                        {% for answer in answers_part_1 %}
+                                                            {% if answer.question_id == question[0]+questions_part_1|length %}
+                                                            <input 
+                                                                type="date" 
+                                                                class="form-control form-control-sm" 
+                                                                id="completed_date_{{question[0]+questions_part_1|length}}" 
+                                                                {% if answer.answer_value %} value="{{answer.answer_value}}" {% endif %}
+                                                                name="comp_date_{{question[0]+questions_part_1|length}}">
+                                                            {% endif %}
+                                                        {% endfor %}
+                                                        
+                                                    {% else %}
+                                                        <input type="date" class="form-control form-control-sm" id="completed_date_{{question[0]+questions_part_1|length}}" name="comp_date_{{question[0]+questions_part_1|length}}">
+                                                    {% endif %}
+                                                </td>
+                                            </tr>
+                                            {% endfor %}
+                                            
+                                        </table>
+                                        <br>
+                                        <h6>2. Discuss with your supervisor(s) whether or not your research has been or will need to be approved by any of the
+                                            Lincoln University Committees listed below and tick the appropriate box.<span>*</span></h6>
+                                        <table class="table">
+                                            <thead>
+                                                <th class="first-col"></th>
+                                                <th class="text-center">Needed</th>
+                                                <th class="text-center">Approval Given</th>
+                                                <th class="text-center">Not Needed</th>
+                                            </thead>
+                                            <tbody>
+                                                {% for question in questions_part_2 %}
+                                                {% if answers_part_2 %}
+                                                <tr>
+                                                    <td class="first-col">{{question[2]}}</td>
+                                                    {% for answer in answers_part_2%}
+                                                        {% if answer.question_id == question[0]%}
+                                                            {% if answer.answer_value == "1" %}
+                                                                <td class="text-center"><input type="radio" value="1" checked name="approval_{{question[0]}}" required /></td>
+                                                                <td class="text-center"><input type="radio" value="2" name="approval_{{question[0]}}" required /></td>
+                                                                <td class="text-center"><input type="radio" value="3" name="approval_{{question[0]}}" required /></td>
+                                                            {% elif answer.answer_value == "2" %}
+                                                                <td class="text-center"><input type="radio" value="1" name="approval_{{question[0]}}" required /></td>
+                                                                <td class="text-center"><input type="radio" value="2" checked name="approval_{{question[0]}}" required /></td>
+                                                                <td class="text-center"><input type="radio" value="3" name="approval_{{question[0]}}" required /></td>
+                                                            {% elif answer.answer_value == "3" %}
+                                                                <td class="text-center"><input type="radio" value="1" name="approval_{{question[0]}}" required /></td>
+                                                                <td class="text-center"><input type="radio" value="2" name="approval_{{question[0]}}" required /></td>
+                                                                <td class="text-center"><input type="radio" value="3" checked name="approval_{{question[0]}}" required /></td>
+                                                            {% endif %}
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                </tr>
+                                                {% else %}
+                                                <tr>
+                                                    <td class="first-col">{{question[2]}}</td>
+                                                    <td class="text-center"><input type="radio" value="1" name="approval_{{question[0]}}" required/></td>
+                                                    <td class="text-center"><input type="radio" value="2" name="approval_{{question[0]}}" /></td>
+                                                    <td class="text-center"><input type="radio" value="3" name="approval_{{question[0]}}" /></td>
+                                                </tr>
+                                                {% endif %}
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                        <br>
+                                        <h6>3. Given that you are being managed to submit your PhD within 3 years of registering then please tick the
+                                            appropriate reporting box in the table below:</h6>
+                                        <table class="table">
+                                            <thead>
+                                                <tr>
+                                                    <th>Time from start</th>
+                                                    <th>6 Months</th>
+                                                    <th>12 Months</th>
+                                                    <th>18 Months</th>
+                                                    <th>24 Months</th>
+                                                    <th>30 Months</th>
+                                                    <th>3 Years</th>
+                                                </tr>
+                                            </thead>
+                                            <tr>
+                                                <th>Report</th>
+                                                {% if answer_part_3 %}
+                                                    {% for item in reporting_periods_list %}
+                                                        {% if item[0]|string == answer_part_3.answer_value %}
+                                                            <td><input type="radio" value="{{item[0]}}" checked name="reporting_period" required /> {{item[1]}}</td>
+                                                        {% else %}
+                                                            <td><input type="radio" value="{{item[0]}}" name="reporting_period" /> {{item[1]}}</td>
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                {% else %}
+                                                <td><input type="radio" value="1" name="reporting_period" required /> 1st 6-Month</td>
+                                                <td><input type="radio" value="2" name="reporting_period" /> 2nd 6-Month</td>
+                                                <td><input type="radio" value="3" name="reporting_period" /> 3rd 6-Month</td>
+                                                <td><input type="radio" value="4" name="reporting_period" /> 4th 6-Month</td>
+                                                <td><input type="radio" value="5" name="reporting_period" /> 5th 6-Month</td>
+                                                <td><input type="radio" value="6" name="reporting_period" /> 6th 6-Month</td>
+                                                {% endif %}
+                                            </tr>
+                                            <tr>
+                                                <th>Milestone</th>
+                                                <td>Proposal submitted and seminar held</td>
+                                                <td>Proposal approved; Data collection started</td>
+                                                <td>Mid term PhD progress evaluation</td>
+                                                <td>Data collected; Analysis and writing begun</td>
+                                                <td>Analysis done; Half thesis written</td>
+                                                <td>Thesis submitted for examination; Research seminar held</td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                            {% if user_type == 'student' and form.is_current == 1 %}
+                                <button type="submit" class="btn btn-sm btn-primary mt-3">Save</button>
+                            {% endif %}
+                        </form>
+                    </div>
+                    <script>
+                        $(document).ready(function() {
+
+                            // validating part 1 questions
+                            // if user selected Not Completed, they should not be allowed to add date
+
+                            // get the number of questions - this is used to get the id of the date field based on the question id
+                            questions_count = parseInt($('#part_1_questions_count').val())
+
+                            check_box_id = $('#part_1_table tr').find('td .not-completed:first')[0].id; // get the id of the checkbox
+                            question_id = parseInt(check_box_id.split('not_completed_')[1]); // question id
+                                
+
+                            for (i = 0; i <= questions_count; i++) {
+                                enable_disable_completed_date(question_id + i)
+                            }
+
+                            $('.not-completed').click(function() {
+                                check_box_id = $(this).attr('id'); // get the id of the checkbox
+                                question_id = check_box_id.split('not_completed_')[1]; // question id
+                                enable_disable_completed_date(question_id);
+
+                            });
+                            
+                            // function to enable or disable the completed date field
+                            // based on the checkbox value
+                            function enable_disable_completed_date(question_id){
+                                questions_count = $('#part_1_questions_count').val()
+                                completed_date_id = '#completed_date_' + parseInt(parseInt(question_id) + parseInt(questions_count));
+                                if($('#not_completed_' + question_id).prop("checked") == true){
+                                    $(completed_date_id).prop('disabled', true);
+                                    $(completed_date_id).val('');
+
+                                } else {
+                                    $(completed_date_id).prop('disabled', false);
+                                }
+                            }
+                        });
+                    </script>
+               </div>
+            </div>
+            <div class="card-footer">
+            <a href="/form/section_a?form_id={{form_id}}&student_id={{student_id}}" class="btn btn-sm btn-outline-primary">SECTION A</a>
+            <button class="btn btn-sm btn-primary" disabled>SECTION B </button>
+            <a href="/form/section_c?form_id={{form_id}}&student_id={{student_id}}" class="btn btn-sm btn-outline-primary">SECTION C</a>
+            <a href="/form/section_d?form_id={{form_id}}&student_id={{student_id}}" class="btn btn-sm btn-outline-primary">SECTION D</a>
+            {% if (user_type != 'student' and form.is_supervisor_approved == 1) or (user_type == 'student' and form.is_current == 0)
+            or form.is_admin_completed %} <a href="/form/section_e?form_id={{form_id}}&student_id={{student_id}}"
+                class="btn btn-sm btn-outline-primary">SECTION E</a> {% endif %}
+
+            {% if user_type == 'chair' or user_type == 'student' %}<a href="/form/section_f?form_id={{form_id}}&student_id={{student_id}}" class="btn btn-sm btn-outline-primary">SECTION F</a>{% endif %}
+            </div>
+         </div>
+      </div>
+   </div>
+</div>
+{% endblock %}

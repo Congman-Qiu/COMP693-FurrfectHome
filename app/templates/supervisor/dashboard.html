@@ -1,0 +1,104 @@
+{% extends "layouts/base.html" %} {% block title %} Dashboard {% endblock %} {%
+block content %}
+<div>
+  <!-- Page Heading -->
+  <div class="page-heading mb-4">
+    {% with message = get_flashed_messages(with_categories=true) %} {% if
+    message %} {% for category, message in message %} {% if category =='danger'
+    %}
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+      {{ message }}
+      <button
+        type="button"
+        class="btn-close"
+        data-bs-dismiss="alert"
+        aria-label="Close"
+      ></button>
+    </div>
+    {% else %}
+    <div class="alert alert-primary alert-dismissible fade show" role="alert">
+      {{ message }}
+      <button
+        type="button"
+        class="btn-close"
+        data-bs-dismiss="alert"
+        aria-label="Close"
+      ></button>
+    </div>
+    {% endif %} {% endfor %} {% endif %} {% endwith %}
+    <h2>Dashboard</h2>
+  </div>
+  <!-- Page Content -->
+  <div class="row">
+    <div class="col-md-6 mb-4">
+      <div class="card">
+        <h5 class="card-header">Personal Information</h5>
+        <div class="card-body">
+          <div class="row mb-3">
+            <div class="col-md-12">
+              <div class="row">
+                <div class="col-md-12">
+                  <span><b> Full Name</b></span>
+                  <span class="badge badg text-bg-light personal-details mb-1"
+                    >{{supervisor.first_name}} {{supervisor.last_name}}</span
+                  >
+                </div>
+              </div>
+              <div class="icon-container">
+                <a
+                  href="{{url_for('supervisor_view')}}"
+                  class="icon btn btn-sm btn-outline-primary mt-3"
+                >
+                  <i class="fa-solid fa-id-badge fa-xl"></i>
+                  <div class="icon-cap">View Profile</div>
+                </a>
+                <a
+                  href="{{url_for('supervisor_update')}}"
+                  class="icon btn btn-sm btn-outline-primary mt-3"
+                >
+                  <i class="fa-solid fa-address-card fa-xl"></i>
+                  <div class="icon-cap">Update Profile</div>
+                </a>
+                <a
+                  href="{{url_for('view_supervisees')}}"
+                  class="icon btn btn-sm btn-outline-primary mt-3"
+                >
+                  <i class="fa-solid fa-graduation-cap fa-xl"></i>
+                  <div class="icon-cap">My Supervisees</div>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6 mb-4">
+      <div class="card">
+        <h5 class="card-header">6MR</h5>
+        <div class="card-body">
+          <div class="row mb-3">
+            <div class="col-md-12 d-flex gap-1">
+              <div class="icon-container">
+                <a
+                  href="/form/current_forms?department_id={{department_id}}"
+                  class="icon btn btn-sm btn-outline-primary mt-3"
+                >
+                  <i class="fa-solid fa-chalkboard-user fa-xl"></i>
+                  <div class="icon-cap">Current 6MR Forms</div>
+                </a>
+                <a
+                  href="{{url_for('historical_6mr')}}"
+                  class="icon btn btn-sm btn-outline-primary mt-3"
+                >
+                  <i class="fa-sharp fa-solid fa-box-archive fa-xl"></i>
+                  <div clas="icon-cap">View Previous 6MR</div>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

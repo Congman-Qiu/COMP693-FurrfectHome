@@ -1,0 +1,222 @@
+/*
+    COMP693 - Independent Learning Project
+    Congman Qiu 1153258
+    FurrfectHome 
+*/
+
+body {
+  font-family: "Nunito", sans-serif !important;
+}
+
+.text-sm {
+  font-size: small;
+}
+
+.text-dark-light {
+  color: #cccccc;
+}
+
+.footer-container {
+  text-align: center;
+  border-top: 1px solid #eee;
+  padding-top: 10px;
+  font-size: small;
+}
+
+.required-field {
+  color: red;
+}
+
+.error-message {
+  color: red;
+  font-size: small;
+}
+
+.news-sent {
+  font-size: smaller;
+  color: #d78521;
+}
+
+.empty-message {
+  font-size: small;
+  color: #d78521;
+}
+
+.form-signin {
+  max-width: 300px !important;
+}
+
+.login-logo {
+  width: 100px;
+  height: auto !important;
+}
+
+.notify-label {
+  color: rgb(112, 112, 112);
+  font-size: small;
+}
+
+.custom-tooltip {
+  --bs-tooltip-bg: var(--bs-primary);
+}
+
+.dashboard-image {
+  border-radius: 15px;
+}
+
+.personal-details {
+  font-size: medium !important;
+  font-weight: normal !important;
+}
+
+.register-form {
+  margin-top: 10px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.register-form .form-control {
+  width: 100%;
+  max-width: 250px;
+}
+
+.register-p {
+  color: #dbaab3;
+  font-size: 14px;
+}
+
+.register-label {
+  font-weight: bold;
+  font-size: 16px;
+  color: #dbaab3;
+  margin-right: 5px;
+  white-space: nowrap;
+}
+
+.notifications {
+  color: #d78521 !important;
+}
+
+.notifications:hover {
+  color: #fcc37d !important;
+}
+
+.bottom-container {
+  display: flex;
+}
+
+.update-header > p {
+  font-size: 10px;
+  margin-bottom: 0;
+}
+
+.list-group-item {
+  margin-bottom: 0px;
+}
+
+.update-box {
+  padding-top: 10px;
+  margin-bottom: 30px;
+  position: relative;
+}
+
+.delete-btn {
+  position: absolute;
+  right: 15px;
+  top: 1px;
+  padding: 3px;
+  text-decoration: underline;
+  cursor: pointer;
+  color: #d78521;
+}
+
+#employmentContainer,
+#scholarshipContainer {
+  padding-left: 24px;
+}
+
+.supervisor-link {
+  cursor: pointer;
+}
+
+.employment-section,
+.scholarship-section {
+  line-height: 25px;
+  margin-bottom: 10px;
+  display: flex;
+  gap: 15px;
+}
+
+.table-format > p {
+  font-weight: bold;
+}
+
+.supervisor-attr {
+  font-weight: bold;
+  color: #dbaab3;
+  margin-right: 10px;
+  margin-bottom: 5px;
+}
+
+.supervisor-input-search,
+.student-input-search {
+  width: 200px !important;
+}
+
+.colorsquare {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border-radius: 5px;
+}
+
+.colorsquare.green {
+  background-color: green;
+}
+
+.colorsquare.orange {
+  background-color: orange;
+}
+
+.colorsquare.red {
+  background-color: red;
+}
+
+.centered-content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+
+.color-label {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: none;
+  border-radius: 5px;
+  padding-top: 5px;
+  flex-direction: column;
+  position: relative;
+  margin: -2px 3px;
+}
+
+.red {
+  background-color: red;
+}
+
+.orange {
+  background-color: orange;
+}
+
+.green {
+  background-color: green;
+}
+
+.table-button-group {
+  display: flex;
+  flex-direction: row;
+  width: max-content;
+  gap: 3px;
+}

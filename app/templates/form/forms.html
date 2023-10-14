@@ -1,0 +1,122 @@
+{% extends "layouts/base.html" %} {% block title %} 6MR Forms {% endblock %} {%
+block content %}
+<div>
+  <!-- Page Heading -->
+  <div class="page-heading mb-4">
+    {% for message in get_flashed_messages() %}
+    <div class="alert alert-primary alert-dismissible fade show" role="alert">
+      {{ message }}
+      <button
+        type="button"
+        class="btn-close"
+        data-bs-dismiss="alert"
+        aria-label="Close"
+      ></button>
+    </div>
+    {% endfor %}
+    <h2>6MR Forms</h2>
+  </div>
+
+  <!-- Page Content -->
+  <div class="card">
+    <div class="card-header">Current 6MR Forms</div>
+    <div class="card-body">
+    {% if not forms %}
+        <span class="news-empty">No results</span>
+    {% else %}
+        <table class="table" id="myTable">
+            <thead>
+                <tr>
+                    <th>Form ID</th>
+                    <th>Student</th>
+                    <th>Current Status</th>
+                    <th>Send Reminder/ Notification</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for form in forms %}
+                    <tr>
+                        <td>{{form.form_id}}</td>
+                        <td>{{form.student_first_name}} {{form.student_last_name}}</td>
+
+                        {% if form.is_student_submitted == 0 %}
+                            <td><span>Student is working on this</span></td>
+                            <td><button class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#remind_student_modal_{{form.form_id}}">Remind Student</button></td>
+                        {% elif form.is_student_submitted == 1 and form.is_supervisor_approved == 0 %}
+                            <td><span>Main Supervisor is working on this</span></td>
+                            <td><button class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#remind_main_supervisor_modal_{{form.form_id}}">Remind Main Supervisor</button></td>
+                        {% elif form.is_student_submitted == 1 and form.is_supervisor_approved == 1 and form.is_convenor_submitted == 0 %}
+                            <td><span>Co-supervisors and Convenor</span></td>
+                            <td><button class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#remind_supervisors_modal_{{form.form_id}}">Remind CO-Supervisors</button></td>
+                        {% elif form.is_convenor_submitted == 1 %}
+                            <td><span>All Sections Completed</span></td>
+                            {% if form.is_admin_completed == 1 %}
+                                <td><span class="message-sm-primary">Notification Sent</span></td>
+                            {% else %}
+                                <td><button class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#remind_all_modal_{{form.form_id}}">Complete 6MR</button></td>
+                            {% endif %}
+                        {% endif %}
+
+                        {% set reminder_type = "" %}
+                        {% set modal_id = "" %}
+                        {% set modal_label = "" %}
+                        {% set modal_body = "" %}
+                        
+                        {% if form.is_student_submitted == 0 %}
+                            {% set reminder_type = "student" %}
+                            {% set modal_id = "remind_student_modal_" + form.form_id | string %}
+                            {% set modal_label = "remind_student_modalLabel" %}
+                            {% set modal_body = "Do you want to send reminder to Student? <br> Email will be sent out to student to submit the 6MR form." %}
+                        {% elif form.is_student_submitted == 1 and form.is_supervisor_approved == 0 %}
+                            {% set reminder_type = "main_supervisor" %}
+                            {% set modal_id = "remind_main_supervisor_modal_" + form.form_id | string %}
+                            {% set modal_label = "remind_main_supervisor_modalLabel" %}
+                            {% set modal_body = "Do you want to send reminder to Main Supervisor?<br> Email will be sent out to Main Supervisor to fill relevant sections of the 6MR form." %}
+                        {% elif form.is_student_submitted == 1 and form.is_supervisor_approved == 1 and form.is_convenor_submitted == 0 %}
+                            {% set reminder_type = "co_supervisors" %}
+                            {% set modal_id = "remind_supervisors_modal_" + form.form_id | string %}
+                            {% set modal_label = "remind_supervisors_modalLabel" %}
+                            {% set modal_body = "Do you want to send reminder to CO-Supervisors and the Convenor?<br> Email will be sent out to CO-Supervisors and Convenor to fill relevant sections of the 6MR form." %}
+                        {% elif form.is_convenor_submitted == 1 %}
+                            {% set reminder_type = "complete" %}
+                            {% set modal_id = "remind_all_modal_" + form.form_id | string %}
+                            {% set modal_label = "remind_all_modalLabel" %}
+                            {% set modal_body = "Do you want to send notification to everyone anticipated in this 6MR form? <br> Email will be sent out to Student, Supervisors and Department Convenor." %}
+                        {% endif %}
+
+                        <!-- reminder modal -->
+                        <form action="/form/reminder" method="POST">
+                            <input type="hidden" name="form_id" value="{{form.form_id}}">
+                            <input type="hidden" name="reminder_type" value="{{reminder_type}}">
+                            <div class="modal fade" id="{{modal_id}}" tabindex="-1" aria-labelledby="{{modal_label}}"
+                                aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h3 class="modal-title fs-5" id="{{modal_label}}"> 6MR Form: ({{form.form_id}}) / Student: {{form.student_first_name}} {{form.student_last_name}} </h3>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <p class="text-sm">
+                                                {{modal_body | safe}}
+                                            </p>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal"> Cancel </button>
+                                            <button type="submit" class="btn btn-sm btn-primary"> Send</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}
+{% block script %}
+{% endblock %}

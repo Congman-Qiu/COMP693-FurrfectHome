@@ -1,0 +1,101 @@
+{% extends "layouts/base.html" %} {% block title %} View my profile {%
+    endblock %} {% block content %}
+    
+    <h2>View My Profile</h2>
+    <br />
+    <div class="card">
+        <div class="card-header update-header d-flex gap-5 bg-light text-black">
+            <p>Student ID: {{personal_details.student_id}}</p>
+            <p>Email: {{personal_details.email}}</span></p>
+            <p>Department: {{personal_details.department_name}}</span></p>
+        </div>
+    
+        <div class="m-2">
+            <h5 class="m-2">Personal Details</h5>
+            <div class="row m-2">
+                <div class="col-md-6">
+                    <p>First Name: <span>{{personal_details.student_first_name}}</span></p>
+                </div>
+                <div class="col-md-6">
+                    <p>Last Name: <span>{{personal_details.student_last_name}}</span></p>
+                </div>
+                <div class="col-md-6">
+                    <p>Phone Number: <span>{{personal_details.phone}}</span></p> 
+                </div>
+                <div class="col-md-6">
+                    <p>Address: <span>{{personal_details.address}}</span></p> 
+                </div>
+                <div class="col-md-6">
+                    <p>Enrolment Date: <span>{{personal_details.enrolment_date}}</span></p> 
+                </div>
+                <div class="col-md-6">
+                    <p>Thesis Title: <span>{{personal_details.thesis_title}}</span></p> 
+                </div>
+            </div> 
+        </div>
+
+
+        <div class="m-2">
+            <h5 class="m-2">Employment at LU</h5>
+            <div class="row m-2">
+                {% if employment_details %}
+                <table class="table table-sm">
+                    <thead>
+                    <tr>
+                        <th scope="col">Employment_type</th>
+                        <th scope="col">Supervisor Name</th>
+                        <th scope="col">Hours_per_week</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        {% for detail in employment_details %}
+                        <td>{{detail.employment_type}}</td>
+                        <td>{{detail.supervisor_name}}</td>
+                        <td>{{detail.hours_per_week}}</td>
+                        {% endfor %}
+                    </tr>
+                    </tbody>
+                </table>
+                {% else %}
+            <div class="message-sm-primary">No employment records</div>
+            {% endif %}
+            </div> 
+        </div>
+
+
+        <div class="m-2">
+            <h5 class="m-2">Scholarship Details</h5>
+            <div class="row m-2">
+                {% if scholarship_details %}
+                <table class="table table-sm">
+                    <thead>
+                    <tr>
+                        <th scope="col">Name</th>
+                        <th scope="col">Value</th>
+                        <th scope="col">Tenure</th>
+                        <th scope="col">End Date</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    
+                    {% for detail in scholarship_details %}
+                    <tr>
+                        <td>{{detail.scholarship_name}}</td>
+                        <td>{{detail.value}}</td>
+                        <td>{{detail.tenure}}</td>
+                        <td>{{detail.end_date}}</td>
+                    </tr>
+                    {% endfor %}
+
+                    </tbody>
+                </table>
+                {% else %}
+            <div class="message-sm-primary">No employment records</div>
+            {% endif %}
+            </div> 
+        </div>
+    </div>   
+    
+  
+  {% endblock %}

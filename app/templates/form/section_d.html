@@ -1,0 +1,550 @@
+{% extends "layouts/base.html" %} {% block title %} 6MR Form - Section D {% endblock %} {% block content %} 
+<div>
+   <!-- Page Heading -->
+   <div class="page-heading mb-4"> {% for message in get_flashed_messages()%} <div
+         class="alert alert-primary alert-dismissible fade show" role="alert"> {{ message }} <button type="button"
+            class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div> {% endfor %} <h2>6MR Form (Draft)</h2>
+   </div>
+
+   <!-- Page Content -->
+   <div class="row">
+      <div class="col-md-12 mb-4">
+         <div class="card">
+            <h5 class="card-header">Section D – Progress and Achievements</h5>
+            <div class="card-body">
+               <div class="row mb-3">
+                  <form action="/form/section_d" method="POST">
+                     <input type="hidden" name="form_id" value="{{ form_id }}">
+                     <input type="hidden" name="user_id" value="{{ user_id }}">
+                     <input type="hidden" name="student_id" value="{{ student_id }}">
+                     <div class="col-md-12">
+                        <div class="row">
+                           <div class="col-md-12">
+                              <h5 class="header-l-primary">Assessment by student and supervisors</h5>
+                              <div class="text-sm p-2">
+                                 <p>This is an assessment of your progress and will be included in your postgraduate record. It is intended primarily to
+                                    assist you to plan and carry out your study. The assessment is a documented record of your study and will illustrate
+                                    your ability to define and achieve objectives.</p>
+                                 <p>Complete this after discussing it with your supervisor.</p>
+                                 <p>Ensure you note and address any deviations from the standard 3-year PhD timeline. Add additional rows to these
+                                    tables as necessary.</p>
+                              </div>
+                              <h6 class="header-m-primary">(1) Report on your Research Objectives for the last Six Months</h6>
+                              {% if form_answers.res_obj_list | length > 0 %}
+                                 <table class="table text-sm">
+                                    <thead>
+                                       <tr>
+                                          <th>Research Objectives</th>
+                                          <th>Status</th>
+                                          <th>Comments - Explain, where relevant, why particular activities are not completed</th>
+                                       </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for i in range(3) %}
+                                       <tr>
+                                          {% for item in form_answers.res_obj_list %}
+                                             {% if item.answer_group == i + 1 %}
+                                                {% if item.sequence == 1 %}
+                                                   <td><label>{{item.answer_value}}</label></td>
+                                                {% elif item.sequence == 2 %}
+                                                   <td>
+                                                      <select class="form-select form-select-sm" name="status_{{item.answer_group}}_{{item.sequence}}" aria-label="Default select example">
+                                                         <option value="0"{% if item.answer_value==None %} {% endif %}>Select a value</option>
+                                                         <option value="1"{% if item.answer_value=="1" %} selected="selected"{% endif %}>Complete</option>
+                                                         <option value="2"{% if item.answer_value=="2" %} selected="selected"{% endif %}>Incomplete</option>
+                                                      </select>
+                                                   </td>
+                                                {% elif item.sequence == 3 %}
+                                                   <td><input class="form-control form-control-sm" type="text" value="{{item.answer_value}}" name="comment_{{item.answer_group}}_{{item.sequence}}"></td>
+                                                {% endif %}
+                                             {% endif %}
+                                          {% endfor %}
+                                       </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                 </table>
+                              {% else %}
+                              <div class="row">
+                                 <div class="col-md-6">
+                                    <span class="message-sm-warning">No research objectives set previously.</span>
+                                 </div>
+                              </div>
+                              {% endif %}
+                              <br>
+                              <label class="form-label">Have any of these objectives changed or been modified since your Proposal? If so, how, and why?</label>
+                              <div class="col-md-4">
+                                 <textarea class="form-control form-control-sm" name="objective_changed" rows="4"
+                                 >{% if form_answers.objective_changed %}{{form_answers.objective_changed.answer_value}}{% endif %}</textarea>
+                              </div>
+                              <br>
+
+                              <!-- other achievements -->
+                              
+                              <h6 class="header-m-primary">(2) Other Significant Academic Achievements in the last Six Months</h6>
+                              <label class="form-label">(List other achievements including conference presentations, publications, workshops, posters etc)</label>
+                              <table id="achievement_table" class="text-sm">
+                                 <tbody>
+                                    {% if form_answers %}
+                                       {% if form_answers.achievements_list %}
+                                          {% for achievement in form_answers.achievements_list %}
+                                             <tr id="{{achievement[1]}}" class="achievement-row">
+                                                <td><input class="form-control form-control-sm" value="{{achievement[0]}}" type="text" name="achievement_{{achievement[1]}}"></td>
+                                                <td>
+                                                   {% if form.is_current %}
+                                                   <input 
+                                                      type="button" 
+                                                      class="btn btn-sm btn-outline-danger btn-delete-res-obj" 
+                                                      onclick="delete_achievement('{{achievement[1]}}')"
+                                                      value="Delete">
+                                                   {% endif %}
+                                                </td>
+                                             </tr>
+                                          {% endfor %}
+                                       {% endif %}
+                                    {% endif %}
+                                 </tbody>
+                              </table>
+                              {% if form.is_current %}
+                              <input 
+                                 type="button"
+                                 class="btn btn-sm btn-outline-secondary mt-2" 
+                                 id="btn_add_achievement" 
+                                 onclick="add_achievement()"
+                                 value="+ Add Achievement">
+                                 <input type="hidden" id="next_research_obj_count" name="next_research_obj_count" value="">
+                                 <br>
+                              {% endif %}
+                              <br>
+                              <!-- research objectives for next six months -->
+                              <h6 class="header-m-primary">(3) Research Objectives for the next Six Months</h6>
+                              <table class="table text-sm" id="next_research_obj_table">
+                                 <tr>
+                                    <th>Research Objectives (see your Research Proposal, which in most cases should have been prepared by now)</th>
+                                    <th>Target completion date</th>
+                                    <th>Anticipated problems in achieving objectives</th>
+                                    <th></th>
+                                 </tr>
+                                 {% if form_answers %}
+                                    {% if form_answers.next_res_obj_list %}
+                                       {% for i in range(1, (form_answers.next_res_obj_list | length / 3) | int + 1) %}
+                                          <tr class="next-research-obj-row" id="{{i}}">
+                                             {% for obj in form_answers.next_res_obj_list%}
+                                                {% if i == obj[1] %}
+                                                   {% if obj[2] == 1 %}
+                                                      <!--objective-->
+                                                      <td>
+                                                         <input 
+                                                            type="text" 
+                                                            class="form-control form-control-sm" 
+                                                            name="next_objective_{{obj[1]}}_{{obj[2]}}"
+                                                            value="{{obj[0]}}"
+                                                            required
+                                                            >
+                                                      </td>
+                                                   {% elif obj[2] == 2 %}
+                                                      <!--target completion date-->
+                                                      <td><input 
+                                                            type="date" 
+                                                            class="form-control form-control-sm" 
+                                                            name="completion_date_{{obj[1]}}_{{obj[2]}}"
+                                                            value="{{obj[0]}}"
+                                                            id="completion_date_{{obj[1]}}_{{obj[2]}}"
+                                                            required
+                                                            >
+                                                      </td>
+                                                   {% elif obj[2] == 3 %}
+                                                      <!--problems-->
+                                                      <td><input 
+                                                            type="text" 
+                                                            class="form-control form-control-sm" 
+                                                            name="problem_{{obj[1]}}_{{obj[2]}}"
+                                                            value="{{obj[0]}}"
+                                                            required
+                                                            >
+                                                      </td>
+                                                      <td>
+                                                         {% if form.is_current %}
+                                                            <input 
+                                                               type="button" 
+                                                               class="btn btn-sm btn-outline-danger btn-delete-next-res-obj" 
+                                                               onclick="delete_next_research_obj('{{obj[1]}}')"
+                                                               value="Delete"
+                                                            >
+                                                         {% endif %}
+                                                      </td>
+                                                   {% endif %}
+                                                {% endif %}
+                                             {% endfor %}
+                                          </tr> 
+                                       {% endfor %}
+                                    {% endif %}
+                                 {% endif %}
+                              </table>
+                              {% if form.is_current %}
+                              <input 
+                                 type="button"
+                                 class="btn btn-sm btn-outline-secondary" 
+                                 id="btn_add_res_obj" 
+                                 onclick="add_next_research_objective()"
+                                 value="+ Add Research Objective">
+                                 <input type="hidden" id="achievement_count" name="achievement_count">
+                              <br>
+                              {% endif %}
+                              <br>
+
+                              <!-- research expenditure -->
+                              <h6 class="header-m-primary">(4) Expected Research Expenditure for the next Six Months</h6>
+                              <table class="table text-sm" id="research_expenditure_table">
+                                 <tr>
+                                    <th>Item</th>
+                                    <th>Amount</th>
+                                    <th>Notes</th>
+                                    <th></th>
+                                 </tr>
+                                 {% if form_answers %}
+                                    {% if form_answers.expenditure_list %}
+                                       {% for i in range(1, (form_answers.expenditure_list | length / 3) | int + 1) %}
+                                       <tr class="research-expenditure-row" id="{{i}}">
+                                          {% for expenditure in form_answers.expenditure_list%}
+                                             {% if i == expenditure[1] %}
+                                                   {% if expenditure[2] == 1 %}
+                                                      <!--item-->
+                                                      <td>
+                                                         <input 
+                                                            type="text" 
+                                                            class="form-control form-control-sm" 
+                                                            name="item_{{expenditure[1]}}_{{expenditure[2]}}"
+                                                            value="{{expenditure[0]}}"
+                                                            required
+                                                            >
+                                                      </td>
+                                                   {% elif expenditure[2] == 2 %}
+                                                      <!--amount-->
+                                                      <td><input 
+                                                            type="number" 
+                                                            class="form-control form-control-sm" 
+                                                            name="amount_{{expenditure[1]}}_{{expenditure[2]}}"
+                                                            value="{{expenditure[0]}}"
+                                                            id="amount_{{expenditure[1]}}_{{expenditure[2]}}"
+                                                            required
+                                                            >
+                                                      </td>
+                                                   {% elif expenditure[2] == 3 %}
+                                                      <!--notes-->
+                                                      <td><input 
+                                                            type="text" 
+                                                            class="form-control form-control-sm" 
+                                                            name="notes_{{expenditure[1]}}_{{expenditure[2]}}"
+                                                            value="{{expenditure[0]}}"
+                                                            required
+                                                            >
+                                                      </td>
+                                                      <td>
+                                                         {% if form.is_current %}
+                                                         <input 
+                                                            type="button" 
+                                                            class="btn btn-sm btn-outline-danger btn-delete-res-exp" 
+                                                            onclick="delete_research_expenditure('{{expenditure[1]}}')"
+                                                            value="Delete"
+                                                         >
+                                                         {% endif %}
+                                                      </td>
+                                                   {% endif %}
+                                                {% endif %}
+                                             {% endfor %}
+                                          </tr>
+                                       {% endfor %}
+                                    {% endif %}
+                                 {% endif %}
+                                 <input type="hidden" name="research_expenditure_count" id="research_expenditure_count">
+                              </table>
+                              {% if form.is_current %}
+                              <input 
+                                 type="button"
+                                 class="btn btn-sm btn-outline-secondary" 
+                                 id="btn_add_res_exp" 
+                                 onclick="add_research_expenditure()"
+                                 value="+ Add Research Expenditure">
+                              <br>
+                              {% endif %}
+                              <div class="row mt-3">
+                                 <div class="col-md-3">
+                                    <label id="research_expenditure_total"></label>
+                                 </div>
+                              </div>
+
+                              <br>
+
+                              <div class="col-md-4">
+                                 <div class="mb-3">
+                                    <label for="comments" class="form-label">Comments<span class="required-field">*</span></label>
+                                    <textarea class="form-control form-control-sm" required name="comments" rows="3" style="width: 100%;"
+                                    >{% if form_answers.comments %}{{form_answers.comments.answer_value}}{% endif %}</textarea>
+                                 </div>   
+                                 
+                                 <div class="mb-3">
+                                    <label for="date" class="form-label">Date<span class="required-field">*</span></label>
+                                    <input 
+                                       type="date" 
+                                       name="date" 
+                                       class="form-control form-control-sm"
+                                       required
+                                       {% if form_answers.date %} value = "{{form_answers.date.answer_value}}" {% endif %}>
+                                 </div>   
+                              </div>
+
+                              {% if user_type == 'supervisor' %}
+                                 {% if form.is_student_submitted == 1 and student_supervisor.supervisor_type == "principal" and not form.is_supervisor_approved == 1 %}
+                                    <button type="button" data-bs-toggle="modal" data-bs-target="#approve_form_modal" class="btn btn-sm btn-primary mt-2">Approve</button>
+                                    <button type="button" data-bs-toggle="modal" data-bs-target="#decline_form_modal"class="btn btn-sm btn-warning mt-2">Decline</button>
+                                 {% endif %}
+                                 
+                              {% endif %}
+
+                              <div class="row mt-3">
+                                 <div class="col-md-12 text-sm">
+                                    <span>Section A, B, C - Student to complete</span><br>
+                                    <span>Section D - Student to complete after discussion with supervisor</span><br>
+                                    <span>Section E - Supervisors to complete</span><br>
+                                    <span>Section F - Thesis students can complete if they wish and return to the Postgraduate Chair</span>
+                                 </div>
+                              </div>
+                           </div>
+                        </div>
+                     </div>
+                     {% if user_type == 'student' and form.is_current == 1 %}
+                        <div class="col-md-12">
+                           <button type="submit" class="btn btn-sm btn-primary mt-3">Save</button>
+                        </div>
+                     {% endif %}
+                  </form>
+                  <form action="/form/submit" method="POST">
+                     <!-- approval modal-->
+                     <input type="hidden" name="submit_type" value="approve">
+                     <input type="hidden" name="form_id" value="{{form_id}}">
+                     <input type="hidden" name="student_id" value="{{student_id}}">
+                     <div class="modal fade" id="approve_form_modal" tabindex="-1" aria-labelledby="approve_form_modalLabel"
+                        aria-hidden="true">
+                        <div class="modal-dialog">
+                           <div class="modal-content">
+                              <div class="modal-header">
+                                 <h1 class="modal-title fs-5" id="approve_form_modalLabel"> 6MR Form Approval - Confirmation </h1>
+                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                              </div>
+                              <div class="modal-body">
+                                 <p>Do you want to approve the 6MR form?</p>
+                                 <p>Email will be sent out to all the co-supervisors to review the form.</p>
+                              </div>
+                              <div class="modal-footer">
+                                 <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal"> Cancel </button>
+                                 <button type="submit" class="btn btn-sm btn-primary"> Approve</button>
+                              </div>
+                           </div>
+                        </div>
+                     </div>
+                  </form>
+                  <form action="/form/submit" method="POST">
+                     <input type="hidden" name="submit_type" value="decline">
+                     <input type="hidden" name="form_id" value="{{form_id}}">
+                     <input type="hidden" name="student_id" value="{{student_id}}">
+                     <!-- rejection modal-->
+                     <div class="modal fade" id="decline_form_modal" tabindex="-1" aria-labelledby="decline_form_modalLabel"
+                        aria-hidden="true">
+                        <div class="modal-dialog">
+                           <div class="modal-content">
+                              <div class="modal-header">
+                                 <h1 class="modal-title fs-5" id="decline_form_modalLabel"> 6MR Form Decline - Confirmation </h1>
+                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                              </div>
+                              <div class="modal-body">
+                                 <p>Do you want to decline the 6MR form?</p>
+                                 <p>Email will be sent out to student to complete the form.</p>
+                                 <label for="decline_reason" class="form-label">Reason for decline</label>
+                                 <textarea class="form-control" id="decline_reason" name="decline_reason" required rows="3"></textarea>
+                              </div>
+                              <div class="modal-footer">
+                                 <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal"> Cancel </button>
+                                 <button type="submit" class="btn btn-sm btn-primary"> Decline</button>
+                              </div>
+                           </div>
+                        </div>
+                     </div>
+                  </form>
+            </div>
+            <div class="card-footer">
+               <a href="/form/section_a?form_id={{form_id}}&student_id={{student_id}}" class="btn btn-sm btn-outline-primary">SECTION A</a>
+               <a href="/form/section_b?form_id={{form_id}}&student_id={{student_id}}" class="btn btn-sm btn-outline-primary">SECTION B</a>
+               <a href="/form/section_c?form_id={{form_id}}&student_id={{student_id}}" class="btn btn-sm btn-outline-primary">SECTION C</a>
+               <button class="btn btn-sm btn-primary" disabled>SECTION D </button>
+               {% if (user_type != 'student' and form.is_supervisor_approved == 1) or (user_type == 'student' and form.is_current == 0)
+               or form.is_admin_completed %} <a href="/form/section_e?form_id={{form_id}}&student_id={{student_id}}"
+                  class="btn btn-sm btn-outline-primary">SECTION E</a> {% endif %}
+
+               {% if user_type == 'chair' or user_type == 'student' %}<a href="/form/section_f?form_id={{form_id}}&student_id={{student_id}}" class="btn btn-sm btn-outline-primary">SECTION F</a>{% endif %}
+            </div>
+         </div>
+      </div>
+   </div>
+</div>
+<script>
+
+   $(document).ready(function(){
+      row_count_achievement = parseInt($('#achievement_table tr:last').attr('id'));
+      row_count_research_expenditure = parseInt($('#research_expenditure_table tr:last').attr('id'));
+      row_count_next_research_obj = parseInt($('#next_research_obj_table tr:last').attr('id'));
+
+      row_count_achievement = isNaN(row_count_achievement) ? 0 : row_count_achievement;
+      row_count_research_expenditure = isNaN(row_count_research_expenditure) ? 0 : row_count_research_expenditure;
+      row_count_next_research_obj = isNaN(row_count_next_research_obj) ? 0 : row_count_next_research_obj;
+
+      $('#achievement_count').val(row_count_achievement)
+      $('#research_expenditure_count').val(row_count_research_expenditure)
+      $('#next_research_obj_count').val(row_count_next_research_obj)
+
+      research_expenditure_total = 0
+      $('#research_expenditure_table tr.research-expenditure-row').each(function(){
+         id = $(this).attr('id')
+         value = $('#amount_' + id + '_2').val()
+         research_expenditure_total += parseFloat(value)
+      })
+      $('#research_expenditure_total').html("Total Expenditure: <b>$" + research_expenditure_total.toLocaleString() + "</b>")
+   });
+
+   var res_obj_group_id = 1;
+
+   // research objective functions
+   function add_next_research_objective(){
+
+      row_count_next_research_obj = 0;
+      row_count_next_research_obj = parseInt($('#next_research_obj_table tr:last').attr('id'));
+
+      if (isNaN(row_count_next_research_obj)) {
+         row_count_next_research_obj = 0;
+      }
+
+      row_count_next_research_obj++;
+
+      next_obj_name = 'next_objective_' + row_count_next_research_obj + '_1';
+      completion_date_name = 'completion_date_' + row_count_next_research_obj + '_2';
+      problem_name = 'problem_' + row_count_next_research_obj + '_3';
+
+      var next_research_obj_row = `
+          <tr class="next-research-obj-row" id="${row_count_next_research_obj}">
+               <td><input type="text" class="form-control form-control-sm" name="${next_obj_name}" required></td>
+               <td><input type="date" class="form-control form-control-sm" name="${completion_date_name}" id="${completion_date_name}" required ></td>
+               <td><input type="text" class="form-control form-control-sm" name="${problem_name}" required ></td>
+               <td>
+                  <input 
+                     type="button" 
+                     class="btn btn-sm btn-outline-danger btn-delete-next-res-obj" 
+                     onclick="delete_next_research_obj(${row_count_next_research_obj})"
+                     value="Delete"
+                  >
+               </td>
+         </tr>
+      `
+
+      $('#next_research_obj_table > tbody:last-child').append(next_research_obj_row);
+      $('#next_research_obj_count').val(get_max_row_id('.next-research-obj-row'))
+   }
+
+   function delete_next_research_obj(row_id){
+      $('#next_research_obj_table tr#' + row_id).remove();
+      $('#next_research_obj_count').val(get_max_row_id('.next-research-obj-row'))
+   }
+
+   // achievement functions
+   function add_achievement(){
+      row_count_achievement = 0;
+      row_count_achievement = parseInt($('#achievement_table tr:last').attr('id'));
+
+      if (isNaN(row_count_achievement)){
+         row_count_achievement = 0;
+      }
+
+      row_count_achievement++;
+      
+      achievement_name = 'achievement_' + row_count_achievement;
+
+      var achievement_row = `
+          <tr id="${row_count_achievement}" class="achievement-row">
+            <td><input class="form-control form-control-sm" type="text" name="${achievement_name}"></td>
+            <td>
+               <input 
+                  type="button" 
+                  class="btn btn-sm btn-outline-danger btn-delete-res-obj" 
+                  onclick="delete_achievement(${row_count_achievement})"
+                  value="Delete">
+            </td>
+         </tr>
+      `
+
+      $('#achievement_table > tbody:last-child').append(achievement_row);
+
+      $('#achievement_count').val(get_max_row_id('.achievement-row'))
+     
+   }
+
+   function delete_achievement(row_id){
+      $('#achievement_table tr#' + row_id).remove();
+
+      $('#achievement_count').val(get_max_row_id('.achievement-row'))
+   }
+
+   // research expenditure functions
+   function add_research_expenditure(){
+      row_count_research_expenditure = 0;
+      row_count_research_expenditure = parseInt($('#research_expenditure_table tr:last').attr('id'));
+
+      if (isNaN(row_count_research_expenditure)){
+         row_count_research_expenditure = 0;
+      }
+
+      row_count_research_expenditure++;
+      
+      item_name = 'item_' + row_count_research_expenditure + '_1';
+      amount_name = 'amount_' + row_count_research_expenditure + '_2';
+      notes_name = 'notes_' + row_count_research_expenditure + '_3';
+
+      var research_expenditure_row = `
+          <tr class="research-expenditure-row" id="${row_count_research_expenditure}" >
+            <td><input required type="text" class="form-control form-control-sm" name="${item_name}"></td>
+            <td><input required type="number" class="form-control form-control-sm" name="${amount_name}" id="${amount_name}"></td>
+            <td><input required type="text" class="form-control form-control-sm" name="${notes_name}"></td>
+            <td><input 
+                  type="button" 
+                  class="btn btn-sm btn-outline-danger btn-delete-res-exp" 
+                  onclick="delete_research_expenditure(${row_count_research_expenditure})" 
+                  value="Delete">
+            </td>
+         </tr>
+      `
+
+      $('#research_expenditure_table > tbody:last-child').append(research_expenditure_row);
+
+      $('#research_expenditure_count').val(get_max_row_id('.research-expenditure-row'))
+     
+   }
+
+   function delete_research_expenditure(row_id){
+      $('#research_expenditure_table tr#' + row_id).remove();
+      $('#research_expenditure_count').val(get_max_row_id('.research-expenditure-row'))
+   }
+
+   // helper functions
+   function get_max_row_id(rowSelector) {
+      var maxId = -1;
+
+      $(rowSelector).each(function () {
+         var rowId = parseInt($(this).attr('id'));
+
+         if (rowId > maxId) {
+            maxId = rowId;
+         }
+      });
+
+      return maxId;
+   }
+</script>
+{% endblock %}

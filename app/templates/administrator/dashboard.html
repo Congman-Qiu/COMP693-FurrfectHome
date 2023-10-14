@@ -1,0 +1,90 @@
+{% extends "layouts/base.html" %} {% block title %} Dashboard {% endblock %} {% block content %} 
+<div>
+    <!-- Page Heading -->
+    <div class="page-heading mb-4"> {% for message in get_flashed_messages()%} <div
+            class="alert alert-primary alert-dismissible fade show" role="alert"> {{ message }} <button type="button"
+                class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div> {% endfor %} <h2>Dashboard</h2>
+    </div>
+
+    <!-- Page Content -->
+    <div class="row">
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <h5 class="card-header">Students</h5>
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-md-12">
+                                <a href="/student/students" class="icon btn btn-sm btn-outline-primary mt-3">
+                                        <div>
+                                        <i class="fa-solid fa-graduation-cap fa-xl"></i>   
+                                        <div class="icon-cap">Manage Students</div>
+                                    </div>
+                                </a>
+                            <br>
+                            <br>
+                            <p class="card-text"> 
+                                {% if unapproved_students | length == 0 %} 
+                                <span class="message-sm-warning">No new student registrations</span>
+                                {% else %}
+                            <span class="header-m-primary">New Student Registrations</span>
+                            <table class="table table-hover"> 
+                                <tr>
+                                    <th>Student ID</th>
+                                    <th>Student Name</th>
+                                    <th></th>
+                                </tr>
+                                {% for student in unapproved_students %} 
+                                    <tr>
+                                        <td>{{student.student_id}}</td>
+                                        <td>{{student.student_first_name}} {{student.student_last_name}}</td>
+                                        <td>
+                                            <a href="/student/student?student_id={{student.student_id}}"
+                                                class="btn btn-sm btn-outline-primary">View</a>
+                                        </td>
+                                    </tr> 
+                                {% endfor %} 
+                            {% endif %} 
+                            </table>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <h5 class="card-header">6MR Form</h5>
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="icon-container col-md-12">
+                            <a href="/form/current_forms" class="icon btn btn-sm btn-outline-primary mt-3">
+                                <i class="fa-solid fa-chalkboard-user fa-xl"></i>
+                                <div class="icon-cap">Current 6MR Forms</div>
+                            </a>
+                            <a href="/form/forms/" class="icon btn btn-sm btn-outline-primary mt-3">
+                                <i class="fa-solid fa-chart-bar fa-xl"></i>
+                                <div class="icon-cap">6MR Progress</div>
+                            </a>
+                            <a href="/report/form_summary" class="icon btn btn-sm btn-outline-primary mt-3">
+                                <i class="fa-sharp fa-solid fa-rectangle-list fa-xl"></i>
+                                <div class="icon-cap">6MR Status Summary Report</div>
+                            </a>
+                            <a href="/report/performance_analysis_list" class="icon btn btn-sm btn-outline-primary mt-3">
+                                <i class="fa-solid fa-chart-line fa-xl"></i>
+                                <div class="icon-cap">Performance Analysis Report</div>
+                            </a>
+
+                            <a href="/report/historical_forms" class="icon btn btn-sm btn-outline-primary mt-3">
+                                <i class="fa-sharp fa-solid fa-box-archive fa-xl"></i>
+                                <div class="icon-cap">Previous 6MR Forms</div>
+                            </a>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> 
+{% endblock %}

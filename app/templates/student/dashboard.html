@@ -1,0 +1,161 @@
+{% extends "layouts/base.html" %} {% block title %} Dashboard {% endblock %} {%
+block content %}
+<div>
+  <!-- Page Heading -->
+  <div class="page-heading mb-4">
+    {% with message = get_flashed_messages(with_categories=true) %} {% if
+    message %} {% for category, message in message %} {% if category =='danger'
+    %}
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+      {{ message }}
+      <button
+        type="button"
+        class="btn-close"
+        data-bs-dismiss="alert"
+        aria-label="Close"
+      ></button>
+    </div>
+    {% else %}
+    <div class="alert alert-primary alert-dismissible fade show" role="alert">
+      {{ message }}
+      <button
+        type="button"
+        class="btn-close"
+        data-bs-dismiss="alert"
+        aria-label="Close"
+      ></button>
+    </div>
+    {% endif %} {% endfor %} {% endif %} {% endwith %}
+    <h2>Dashboard</h2>
+  </div>
+
+  <!-- Page Content -->
+  <div class="row">
+    <div class="col-md-6 mb-4">
+      <div class="card">
+        <h5 class="card-header">My Information</h5>
+        <div class="card-body">
+          <div class="row mb-3">
+            <div class="col-md-12">
+              <div class="row">
+                <div class="col-md-12">
+                  <span><b> Full Name</b></span>
+                  <span class="badge badg text-bg-light personal-details mb-1"
+                    >{{student_name}}</span
+                  >
+                </div>
+              </div>
+              <div class="icon-container">
+                <a
+                  href="{{url_for('view_student_profile')}}"
+                  class="icon btn btn-sm btn-outline-primary mt-3"
+                >
+                  <i class="fa-solid fa-id-badge fa-xl"></i>
+                  <div class="icon-cap">View Profile</div>
+                </a>
+                <a
+                  href="{{url_for('student_update')}}"
+                  class="icon btn btn-sm btn-outline-primary mt-3"
+                >
+                  <i class="fa-solid fa-address-card fa-xl"></i>
+                  <div class="icon-cap">Update Profile</div>
+                </a>
+                <a
+                  href="/supervisor/supervisors?student_id={{student_id}}"
+                  class="icon btn btn-sm btn-outline-primary mt-3"
+                >
+                  <i class="fa-solid fa-user fa-xl"></i>
+                  <div class="icon-cap">My Supervisors</div>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- 6MR Form -->
+    <div class="col-md-6 mb-4">
+      <div class="card">
+        <h5 class="card-header">6MR Form</h5>
+        <div class="card-body">
+          <h6>Create/ Edit 6MR form or view your previous forms. </h6>
+          <div class="row mb-3">
+            <div class="icon-container col-md-12">
+              {% if not form %}
+              <button
+                type="button"
+                class="icon btn btn-sm btn-outline-primary mt-3"
+                data-bs-toggle="modal"
+                data-bs-target="#sixMR"
+              >
+                <i class="fa-solid fa-file-circle-plus fa-xl"></i>
+                <div class="icon-cap">Create New 6MR</div>
+              </button>
+              {% else %}
+              <div class="icon-container">
+                <a
+                  href="/form/section_a"
+                  class="icon btn btn-sm btn-outline-primary mt-3"
+                >
+                  <i class="fa-solid fa-pen-to-square fa-xl"></i>
+                  <div class="icon-cap">Edit Current 6MR</div>
+                </a>
+                {% endif %}
+                <a
+                  href="/report/historical_forms"
+                  class="icon btn btn-sm btn-outline-primary mt-3"
+                >
+                  <i class="fa-sharp fa-solid fa-box-archive fa-xl"></i>
+                  <div class="icon-cap">View Previous 6MR</div>
+                </a>
+              </div>
+            </div>
+          </div>
+          <!-- Create 6RM Confirmation Modal -->
+          <div
+            class="modal fade"
+            id="sixMR"
+            tabindex="-1"
+            aria-labelledby="sixMRLabel"
+            aria-hidden="true"
+          >
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h1 class="modal-title fs-5" id="sixMRLabel">
+                    Create new 6MR - Confirmation
+                  </h1>
+                  <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="modal"
+                    aria-label="Close"
+                  ></button>
+                </div>
+                <div class="modal-body">
+                  Do you want to create a new 6MR form?
+                </div>
+                <div class="modal-footer">
+                  <button
+                    href="#"
+                    class="btn btn-sm btn-secondary"
+                    data-bs-dismiss="modal"
+                  >
+                    Cancel
+                  </button>
+                  <a
+                    href="{{url_for('create_section_a')}}"
+                    class="btn btn-sm btn-outline-primary"
+                  >
+                    Create New 6MR
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

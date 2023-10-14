@@ -1,0 +1,183 @@
+{% extends "layouts/base.html" %} {% block title %} 6MR Form - Section C {% endblock %} {% block content %} 
+<div>
+   <!-- Page Heading -->
+   <div class="page-heading mb-4"> {% for message in get_flashed_messages()%} <div
+         class="alert alert-primary alert-dismissible fade show" role="alert"> {{ message }} <button type="button"
+            class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div> {% endfor %} <h2>6MR Form (Draft)</h2>
+   </div>
+   <!-- Page Content -->
+   <div class="row">
+      <div class="col-md-12 mb-4">
+         <div class="card">
+            <h5 class="card-header">Section C – Evaluation of Faculty (or Centre) performance</h5>
+            <div class="card-body">
+               <div class="row mb-3">
+                  <div class="col-md-12">
+                     <form action="/form/section_c" method="POST">
+                     <div class="row">
+                        <div class="col-md-12">
+                              <input type="hidden" id="form_id" name="form_id" value="{{form_id}}">
+                              <h6>Rate each of the following as they affect your study within the Faculty (or Centre). If
+                                 you have any concerns about undertaking this evaluation then please go directly to section
+                                 D and then complete section F. Place tick the appropriate option:</h6>
+                              <table class="table">
+                                 <tr>
+                                    <th></th>
+                                    <th class="text-center">Very Good</th>
+                                    <th class="text-center">Good</th>
+                                    <th class="text-center">Satisfactory</th>
+                                    <th class="text-center">Unsatisfactor</th>
+                                    <th class="text-center">Not Relevant</th>
+                                    <th>Comments</th>
+                                 </tr>
+                                 {% for question in questions_part_1 %}
+                                 <tr>
+                                    <td class="first-col">{{question[2]}}</td>
+                                    {% if answers_part_1 %}
+                                       {% for answer in answers_part_1%}
+                                          {% if answer.question_id == question[0]%}
+                                             {% for i in range(1,6) %}
+                                                {% if answer.answer_value == i|string %}
+                                                   <td class="text-center"><input type="radio" checked value="{{i}}" name="rate_{{question[0]}}"></td>
+                                                {% else%}
+                                                   <td class="text-center"><input type="radio" value="{{i}}" name="rate_{{question[0]}}"></td>
+                                                {% endif %}
+                                             {% endfor %}
+                                          {% endif %}
+                                       {% endfor %}
+                                    {% else %}
+                                       <td class="text-center"><input type="radio" value="1" name="rate_{{question[0]}}"></td>
+                                       <td class="text-center"><input type="radio" value="2" name="rate_{{question[0]}}"></td>
+                                       <td class="text-center"><input type="radio" value="3" name="rate_{{question[0]}}"></td>
+                                       <td class="text-center"><input type="radio" value="4" name="rate_{{question[0]}}"></td>
+                                       <td class="text-center"><input type="radio" value="5" name="rate_{{question[0]}}"></td>
+                                    {% endif %}
+
+                                    {% if answers_part_1 %}
+                                       {% for answer in answers_part_1 %}
+                                          {% if answer.question_id == question[0]+questions_part_1|length and answer.answer_value %}
+                                             <td><input type="text" class="form-control form-control-sm" value="{{answer.answer_value}}" name="comment_{{question[0]+questions_part_1|length}}"></td>
+                                          {% endif %}
+                                       {% endfor %}
+                                       {% for answer in answers_part_1 %}
+                                          {% if answer.question_id == question[0]+questions_part_1|length and not answer.answer_value %}
+                                             <td><input type="text" class="form-control form-control-sm" name="comment_{{question[0]+questions_part_1|length}}"></td>
+                                          {% endif %}
+                                       {% endfor %}
+                                    {% else %}
+                                       <td><input type="text" class="form-control form-control-sm" name="comment_{{question[0]+questions_part_1|length}}"></td>
+                                    {% endif %}
+                                 </tr>
+                                 {% endfor %}
+                              </table>
+                              <br>
+                              <table class="table">
+                                 <thead>
+                                    <tr>
+                                       <th colspan="6">How frequently do you have a meeting with your supervisor?</th>
+                                    </tr>
+                                 </thead>
+                                 <tbody>
+                                    {% if answer_part_2 %}
+                                       {% for item in meeting_frequency_list %}
+                                          {% if item[0]|string == answer_part_2.answer_value %}
+                                             <td><input type="radio" value="{{item[0]}}" checked name="meeting_frequency" required /> {{item[1]}}</td>
+                                          {% else %}
+                                             <td><input type="radio" value="{{item[0]}}" name="meeting_frequency" /> {{item[1]}}</td>
+                                          {% endif %}
+                                       {% endfor %}
+                                    {% else %}
+                                    <tr>
+                                       <td><input type="radio" value="1" name="meeting_frequency" /> Weekly</td>
+                                       <td><input type="radio" value="2" name="meeting_frequency" /> Fortnightly</td>
+                                       <td><input type="radio" value="3" name="meeting_frequency" /> Monthly</td>
+                                       <td><input type="radio" value="4" name="meeting_frequency" /> Every 3 months</td>
+                                       <td><input type="radio" value="5" name="meeting_frequency" /> Half yearly</td>
+                                       <td><input type="radio" value="6" name="meeting_frequency" /> Not at all</td>
+                                    </tr>
+                                    {% endif %}
+                                 </tbody>
+                              </table>
+                              <br>
+                              <table class="table">
+                                 <thead>
+                                    <tr>
+                                       <th colspan="5">What is the usual period for receiving feedback from your supervisor
+                                          on submitted materials? </th>
+                                    </tr>
+                                 </thead>
+                                 <tbody>
+                                    {% if answer_part_3 %}
+                                       {% for item in usual_feedback_period_list %}
+                                          {% if item[0]|string == answer_part_3.answer_value %}
+                                             <td><input type="radio" value="{{item[0]}}" checked name="usual_feedback_period" required /> {{item[1]}}</td>
+                                          {% else %}
+                                             <td><input type="radio" value="{{item[0]}}" name="usual_feedback_period" /> {{item[1]}}</td>
+                                          {% endif %}
+                                       {% endfor %}
+                                    {% else %}
+                                    <tr>
+                                       <td><input type="radio" value="1" name="usual_feedback_period" /> 1 Week</td>
+                                       <td><input type="radio" value="2" name="usual_feedback_period" /> 2 Week</td>
+                                       <td><input type="radio" value="3" name="usual_feedback_period" /> 1 Month</td>
+                                       <td><input type="radio" value="4" name="usual_feedback_period" /> 3 months</td>
+                                    </tr>
+                                    {% endif %}
+                                 </tbody>
+                              </table>
+                              <br>
+                              <table class="table">
+                                 <thead>
+                                    <tr>
+                                       <th colspan="5">How do you receive your feedback from your supervisor? (Tick more
+                                          than one box if appropriate)</th>
+                                    </tr>
+                                 </thead>
+                                 <tbody>
+                                    {% if answer_part_4 %}
+                                       {% for item in feedback_receiving_method_list %}
+                                          {% if item[0]|string == answer_part_4.answer_value %}
+                                             <td><input type="radio" value="{{item[0]}}" checked name="feedback_receiving_method" required /> {{item[1]}}</td>
+                                          {% else %}
+                                             <td><input type="radio" value="{{item[0]}}" name="feedback_receiving_method" /> {{item[1]}}</td>
+                                          {% endif %}
+                                       {% endfor %}
+                                    {% else %}
+                                    <tr>
+                                       <td><input type="radio" value="1" name="feedback_receiving_method" /> Softcopy </td>
+                                       <td><input type="radio" value="2" name="feedback_receiving_method" /> Comments on submitted material</td>
+                                       <td><input type="radio" value="3" name="feedback_receiving_method" /> Verbally</td>
+                                       <td><input type="radio" value="4" name="feedback_receiving_method" /> On a separate letter</td>
+                                    </tr>
+                                    {% endif %}
+                                    
+                                 </tbody>
+                              </table>
+                              <br>
+                              <h6>Please make sure all questions in Sections A, B and C are completed before you meet your
+                                 supervisor and Associate Supervisor to complete Section D.</h6>
+                              </div>
+                           </div>
+                           {% if user_type == 'student' and form.is_current == 1 %}
+                              <button type="submit" class="btn btn-sm btn-primary mt-3">Save</button>
+                           {% endif %}
+                     </form>
+                  </div>
+               </div>
+            </div>
+            <div class="card-footer">
+               <a href="/form/section_a?form_id={{form_id}}&student_id={{student_id}}" class="btn btn-sm btn-outline-primary">SECTION A</a>
+               <a href="/form/section_b?form_id={{form_id}}&student_id={{student_id}}" class="btn btn-sm btn-outline-primary">SECTION B</a>
+               <button class="btn btn-sm btn-primary" disabled>SECTION C </button>
+               <a href="/form/section_d?form_id={{form_id}}&student_id={{student_id}}" class="btn btn-sm btn-outline-primary">SECTION D</a>
+               {% if (user_type != 'student' and form.is_supervisor_approved == 1) or (user_type == 'student' and form.is_current == 0)
+               or form.is_admin_completed %} <a href="/form/section_e?form_id={{form_id}}&student_id={{student_id}}"
+                  class="btn btn-sm btn-outline-primary">SECTION E</a> {% endif %}
+
+               {% if user_type == 'chair' or user_type == 'student' %}<a href="/form/section_f?form_id={{form_id}}&student_id={{student_id}}" class="btn btn-sm btn-outline-primary">SECTION F</a>{% endif %}
+            </div>
+         </div>
+      </div>
+   </div>
+</div> {% endblock %}

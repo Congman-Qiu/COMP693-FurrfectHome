@@ -1,0 +1,78 @@
+{% extends "layouts/base.html" %}
+{% block title %} Performance Analysis Report {% endblock %}
+{% block content %} 
+<div>
+    <!-- Page Heading -->
+    <div class="page-heading mb-4">
+        {% for message in get_flashed_messages()%} 
+        <div class="alert alert-primary alert-dismissible fade show" role="alert">
+            {{ message }} 
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endfor %} 
+        <h2>Performance Analysis Report</h2>
+    </div>  
+    <div>
+        <div class="row">
+            <div class="col-md-12 mb-4">
+                <div class="card">
+                    <h6 class="card-header">Six Monthly Report Analysis – {{ month }} {{ year }}</h6>
+                    <div class="card-body">
+                        {% if faculty_performance_list %}
+						{% for percentage in faculty_pa_percentage_list %}
+						<tr>
+						    <div>
+							<span>GRAND TOTAL: {{percentage[11]}} students</span>
+						    </div>
+						    <div>
+							{% if percentage[6] == 0 %}
+							<span>No unsatisfactory responses to follow up this round.</span>
+							{% else %}
+							<span>There's unsatisfactory responses to follow up this round.</span>
+							{% endif %}
+						    </div>
+						</tr>
+						{% endfor %}
+                        <table class="table table-bordered">
+                            <tr>
+                                <th>Area</th>
+                                <th>Very Good</th>
+                                <th>Good</th>
+                                <th>Satisfactory</th>
+                                <th>Unsatisfactory</th>
+                                <th>Not Relevant</th>
+                                <th>Total</th>
+                            </tr>
+							<tr>
+							{% for performance in faculty_performance_list %}
+                            <td>{{performance[1]}}</td>
+                            <td>{{performance[2]}}</td>
+                            <td>{{performance[3]}}</td>
+                            <td>{{performance[4]}}</td>
+                            <td>{{performance[5]}}</td>
+                            <td>{{performance[6]}}</td>
+							<td>{{performance[7]}}</td>
+                            </tr>
+							{% endfor %}
+							<tr>
+							{% for percentage in faculty_pa_percentage_list %}
+                            <th>Total(%)</th>
+                            <td>{{percentage[0]}} ({{percentage[1]}}%)</td>
+                            <td>{{percentage[2]}} ({{percentage[3]}}%)</td>
+                            <td>{{percentage[4]}} ({{percentage[5]}}%)</td>
+                            <td>{{percentage[6]}} ({{percentage[7]}}%)</td>
+                            <td>{{percentage[8]}} ({{percentage[9]}}%)</td>
+							<td>{{percentage[10]}}</td>
+                            </tr>
+							{% endfor %}
+                        </table>
+                        {% else %} 
+                        <span class="message-sm-warning">No Available Report</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+	</div>
+</div>
+{% endblock %}

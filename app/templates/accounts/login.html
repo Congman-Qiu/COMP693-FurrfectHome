@@ -1,0 +1,43 @@
+{% extends "layouts/base.html" %} {% block title %} Login {% endblock %} {%
+block content %}
+<div class="text-center">
+  <main class="form-signin w-100 m-auto">
+    <form action="/accounts/login" method="POST" class="g-3">
+      <img
+        class="mb-1 login-logo"
+        src="/static/images/logo.png"
+        alt=""
+        width="80"
+        height="80"
+      />
+      <div>
+        <input
+          type="email"
+          class="form-control mt-3 mb-3 text-center"
+          name="email"
+          id="email"
+          placeholder="Enter your email"
+          required
+        />
+        <input
+          type="password"
+          class="form-control mt-3 mb-3 text-center"
+          name="password"
+          id="password"
+          placeholder="Enter your password"
+          required
+        />
+        {% if login_error %}
+        <p class="error-message">{{login_error}}</p>
+        {% endif %}
+      </div>
+
+      <button type="submit" class="w-100 btn btn-primary mb-3">Login</button>
+      <p>
+        Don't have an account yet?
+        <a class="lf-link" href="{{ url_for('register') }}">Register now</a>
+      </p>
+    </form>
+  </main>
+</div>
+{% endblock %}

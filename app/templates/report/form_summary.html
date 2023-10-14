@@ -1,0 +1,142 @@
+{% extends "layouts/base.html" %} {% block title %} 6MR Summary Report {% endblock %} {% block content %} <div>
+  <!-- Page Heading -->
+  <div class="page-heading mb-4"> {% for message in get_flashed_messages()%} <div
+      class="alert alert-primary alert-dismissible fade show" role="alert"> {{ message }} <button type="button"
+        class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div> {% endfor %} <h2>6MR Status Summary Report</h2>
+  </div>
+  <div> {% if students_status_list %} <div class="row">
+      <div class="col-md-12 mb-4">
+        <div class="card">
+          <h5 class="card-header">6MR Status Summary</h5>
+          <div class="card-body">
+            <table class="table table-bordered"> {% set currentdepartment = namespace(id = 0) %} <tr>
+                <th>Department</th>
+                <th>Name</th>
+                <th>Degree</th>
+                <th>Supervisor</th>
+                <th>Co-Supervisor</th>
+                <th>Co-Supervisor 2</th>
+                <th>2022 Dec</th>
+                <th>2023 Jun</th>
+                <th>2023 Dec</th>
+                <th>Notes</th>
+                {% if user_type == "administrator" %}
+                  <th>Action</th>
+                {% endif %}
+              </tr>
+              <tr> {% for student in students_status_list %} {% if currentdepartment.id != student[0] %} <td>
+                  {{student[1]}}</td> {% set currentdepartment.id = student[0] %} {% else %} <td></td> {% endif %} <td>
+                  {{student[2]}}</td>
+                <td>{% if student[4] %}{{student[4]}} {% endif %}</td>
+                <td>{% if student[5] %}{{student[5]}} {% endif %}</td>
+                <td>{% if student[6] %}{{student[6]}} {% endif %}</td>
+                <td>{% if student[7] %}{{student[7]}} {% endif %}</td>
+                <td>
+                  <div class="centered-content">
+                    <div {% if student[8]=="1" %} class="colorsquare green" {% elif student[8]=="2"
+                      %}class="colorsquare orange" {% elif student[8]=="3" %}class="colorsquare red" {% endif %}>
+                    </div>
+                  </div>
+                </td>
+                <td>
+                  <div class="centered-content">
+                    <div {% if student[9]=="1" %}class="colorsquare green" {% elif student[9]=="2"
+                      %}class="colorsquare orange" {% elif student[9]=="3" %}class="colorsquare red" {% endif %}>
+                    </div>
+                  </div>
+                </td>
+                <td>
+                  <div class="centered-content">
+                    <div {% if student[10]=="1" %}class="colorsquare green" {% elif student[10]=="2"
+                      %}class="colorsquare orange" {% elif student[10]=="3" %}class="colorsquare red" {% endif %}>
+                    </div>
+                  </div>
+                </td>
+                <td></td>
+                {% if user_type == "administrator" %}
+                <td>
+                  <div class="centered-content">
+                    <div> 
+                      {% if student[8:10].count("3") >= 1 %} 
+                        <button class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#red_modal_{{student[3]}}">Immediate meeting with Convenor</button>
+                        {% elif student[8:11].count("2") >= 2 %} 
+                        <button class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#two_oranges_modal_{{student[3]}}">Student to meet with Convenor</button>
+                        {% elif student[8:11].count("2") == 1 %} 
+                        <button class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#orange_modal_{{student[3]}}">Convenor to meet with Supervisor</button>
+                      {% endif %}
+                    </div>
+                  </div>
+                </td>
+                {% endif %}
+                
+                {% set action_type = "" %}
+                {% set modal_id = "" %}
+                {% set modal_label = "" %}
+                {% set modal_body = "" %}
+                
+                {% if student[8:10].count("3") >= 1 %}
+                    {% set action_type = "red" %}
+                    {% set modal_id = "red_modal_" + student[3] | string %}
+                    {% set modal_label = "red_modalLabel_" + student[3] | string %}
+                    {% set modal_body = "Do you want to send an email to the student to notify to set up an immediate meeting with the department convenor." %}
+                {% elif student[8:11].count("2") >= 2 %}
+                    {% set action_type = "two_oranges" %}
+                    {% set modal_id = "two_oranges_modal_" + student[3] | string %}
+                    {% set modal_label = "two_oranges_modalLabel_" + student[3] | string %}
+                    {% set modal_body = "Do you want to send an email to the student to notify that their progress is modest and set up a meeting with the department convenor." %}
+                {% elif student[8:11].count("2") == 1 %}
+                    {% set action_type = "orange" %}
+                    {% set modal_id = "orange_modal_" + student[3] | string %}
+                    {% set modal_label = "orange_modalLabel_" + student[3] | string %}
+                    {% set modal_body = "Do you want to send a reminder to the department convenor to setup a meeting with supervisor." %}
+                {% endif %}
+
+                <!-- action reminder modal -->
+                <form action="/report/form_summary" method="POST">
+                  <input type="hidden" name="action_type" value="{{action_type}}">
+                  <input type="hidden" name="student_id" value="{{student[3]}}">
+                  <div class="modal fade" id="{{modal_id}}" tabindex="-1" aria-labelledby="{{modal_label}}" aria-hidden="true">
+                    <div class="modal-dialog">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h3 class="modal-title fs-5" id="{{modal_label}}">Action Required - Reminder Email</h3>
+                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                          <p class="text-sm"> {{modal_body | safe}} </p>
+                        </div>
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal"> Cancel </button>
+                          <button type="submit" class="btn btn-sm btn-primary"> Send</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </form>
+              </tr> 
+              {% endfor %}
+            </table>
+
+
+            <span>GRAND TOTAL: {{ students_status_list|length }} students</span>
+            <hr>
+            <ul class="list-group">
+              <li class="list-group-item">
+                <span><label class="color-label green"></label> All good</span><br>
+                <span><label class="color-label orange"></label> Some unsatisfactory comments</span><br>
+                <span><label class="color-label red"></label> Unsatisfactory/ no student report</span>
+              </li>
+              <li class="list-group-item">
+                <span><b>One orange:</b> the Convenor should have a chat to the supervisor.</span><br>
+                <span><b>Two oranges:</b> the student should get an email saying their progress has been ‘modest’ and
+                  should then meet with the Convenor.</span><br>
+                <span><b>One red:</b> an immediate meeting with the Convenor.</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div> {% else %} <h5 class="card-header">No Available Report</h5> {% endif %} {% endblock %}

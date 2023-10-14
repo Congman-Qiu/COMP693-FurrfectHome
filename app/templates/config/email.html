@@ -1,0 +1,21 @@
+{% extends "layouts/base.html" %} {% block title %} Email Config {% endblock %} {% block content %} <div>
+    <div class="row">
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <h5 class="card-header">Config</h5>
+                <div class="card-body">
+                    <p>Update test email address to recieve emails for each functions that involved sending emails.</p>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <form action="/config/email" method="POST">
+                                <input type="email" required class="form-control form-control-sm" name="config_email">
+                                <button type="submit" class="btn btn-sm btn-primary mt-2">Update</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> 
+{% endblock %}

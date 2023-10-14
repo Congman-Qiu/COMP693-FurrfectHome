@@ -1,0 +1,109 @@
+{% extends "layouts/base.html" %} {% block title %} Update Profile {%
+  endblock %} {% block content %}
+
+  <div>
+    <!-- Page Heading -->
+    <div class="page-heading mb-4">
+       {% with message = get_flashed_messages(with_categories=true) %} {% if
+       message %} {% for category, message in message %} {% if category =='danger'
+       %}
+       <div class="alert alert-danger alert-dismissible fade show" role="alert">
+          {{ message }}
+          <button
+             type="button"
+             class="btn-close"
+             data-bs-dismiss="alert"
+             aria-label="Close"
+             ></button>
+       </div>
+       {% else %}
+       <div class="alert alert-primary alert-dismissible fade show" role="alert">
+          {{ message }}
+          <button
+             type="button"
+             class="btn-close"
+             data-bs-dismiss="alert"
+             aria-label="Close"
+             ></button>
+       </div>
+       {% endif %} {% endfor %} {% endif %} {% endwith %}
+  
+  
+  <h2>Update Profile</h2>
+  <br />
+  <div class="row">
+    <form action="/supervisor/update" method="post" class="g-3 m-0">
+      <div class="card">
+        <div class="card-header update-header d-flex gap-5 bg-light text-black">
+          <p>Supervisor ID: {{supervisor.supervisor_id}}</p>
+          <p>Email: {{supervisor.email}}</span></p>
+          <p>Department: {{supervisor.department_name}}</span></p>
+        </div>
+        <input
+          type="hidden"
+          class="form-control"
+          id="supervisor_id"
+          name="supervisor_id"
+          value="{{supervisor.supervisor_id}}"
+        />
+
+        <ul class="list-group list-group-flush">
+          <li class="list-group-item">
+            <h5 class="m-2">Personal Details</h5>
+            <div class="row mt-1">
+              <div class="col-md-6">
+                <label for="first_name" class="form-label">First Name<span class="required-field">*</span></label>
+              <input
+                type="text"
+                class="form-control"
+                id="first_name"
+                name="first_name"
+                value="{{supervisor.first_name}}"
+              />
+        </div>
+        <div class="col-md-6">
+          <label for="last_name" class="form-label">Last Name<span class="required-field">*</span></label>
+            <input
+              type="text"
+              class="form-control"
+              id="last_name"
+              name="last_name"
+              value="{{supervisor.last_name}}"
+            />
+          </div>
+        <div class="col-md-6">
+              <label for="phone_number" class="form-label">Phone Number<span class="required-field">*</span></label>
+          <input
+            pattern="[0-9]+"
+            type="text"
+            class="form-control"
+            id="phone_number"
+            name="phone_number"
+            value="{{supervisor.phone}}"
+          />
+        </div>
+        
+  
+           <div class="row pt-3">
+                <div class="col-md-12">
+                  <button type="submit" class="btn btn-sm btn-primary mb-3">
+                    Update Details
+                  </button>
+                  <a
+                    href="{{url_for('supervisor_dashboard')}}"
+                    class="btn btn-sm btn-secondary mb-3"
+                    >Cancel</a
+                  >
+                </div>
+              </div>
+            </form>
+            </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  {% endblock %}
+  

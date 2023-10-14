@@ -1,0 +1,176 @@
+{% extends "layouts/base.html" %} {% block title %} Register {% endblock %} {%
+block content %}
+
+<div>
+  <main class="w-100 m-auto">
+    <form
+      action="/accounts/register"
+      method="POST"
+      class="d-flex flex-column align-items-center justify-content-center"
+      id="form"
+      role="form"
+    >
+      <img
+        class="mb-1 login-logo"
+        src="/static/images/logo.png"
+        alt=""
+        width="80"
+        height="80"
+      />
+
+      <div
+        id="errorAlert"
+        class="alert alert-danger"
+        role="alert"
+        style="display: none"
+      ></div>
+
+      <div class="register-form">
+        <div class="d-flex flex-column">
+          <label for="email" class="register-label">Email</label>
+          <input
+            type="email"
+            class="form-control mb-3"
+            name="email"
+            id="email"
+            placeholder="your@lincolnuni.ac.nz"
+            required
+          />
+        </div>
+
+        <div class="d-flex flex-column">
+          <label for="department" class="register-label">Department</label>
+          <select
+            required
+            name="department"
+            id="department"
+            class="form-control form-select w-auto mb-3 text"
+            style="color: gray"
+            ;
+          >
+            <option disabled selected>Select your department</option>
+            <option value="1">
+              Department of Environmental Management (DEM)
+            </option>
+            <option value="2">
+              Department of Tourism, Sport and Society (DTSS)
+            </option>
+            <option value="3">School of Landscape Architecture (SOLA)</option>
+          </select>
+        </div>
+
+        <div class="d-flex flex-column">
+          <label for="student_first_name" class="register-label"
+            >First Name</label
+          >
+          <input
+            type="text"
+            class="form-control mb-3"
+            name="student_first_name"
+            id="student_first_name"
+            required
+          />
+        </div>
+        <div class="d-flex flex-column">
+          <label for="student_last_name" class="register-label"
+            >Last Name</label
+          >
+          <input
+            type="text"
+            class="form-control mb-3"
+            name="student_last_name"
+            id="student_last_name"
+            required
+          />
+        </div>
+        <div class="d-flex flex-column">
+          <label for="password1" class="register-label">Password</label>
+          <input
+            type="password"
+            class="form-control mb-3"
+            name="password1"
+            id="password1"
+            placeholder="Must be at least 6 characters"
+            required
+          />
+        </div>
+        <div class="d-flex flex-column">
+          <label for="password2" class="register-label">Confirm Password</label>
+          <input
+            type="password"
+            class="form-control mb-3"
+            name="password2"
+            id="password2"
+            required
+          />
+        </div>
+
+        <div class="d-flex flex-column">
+          <label for="phoneNumber" class="register-label">Phone Number</label>
+          <input
+            type="tel"
+            pattern="[0-9]*"
+            class="form-control mb-3"
+            name="phoneNumber"
+            id="phoneNumber"
+            required
+          />
+        </div>
+      </div>
+      <p class="register-p">
+        <span class="required-field">*</span>All fields are required
+      </p>
+      <button type="submit" class="w-25 btn btn-primary mb-3">
+        <span
+          id="spinner"
+          class="spinner-border spinner-border-sm d-none"
+          role="status"
+          aria-hidden="true"
+        ></span
+        >Register
+      </button>
+    </form>
+    <div id="output"></div>
+    <p class="text-center">
+      Already have an account?
+      <a class="lf-link" href="{{ url_for('login') }}">Log in</a>
+    </p>
+  </main>
+</div>
+
+{% endblock %} {% block script %}
+<script>
+  $(document).ready(function () {
+    $("#form").on("submit", function (e) {
+      $("#spinner").removeClass("d-none");
+      $("#registerBtn").prop("disabled", true);
+      $.ajax({
+        data: {
+          student_first_name: $("#student_first_name").val(),
+          student_last_name: $("#student_last_name").val(),
+          password1: $("#password1").val(),
+          password2: $("#password2").val(),
+          phoneNumber: $("#phoneNumber").val(),
+          email: $("#email").val(),
+          department: $("#department").val(),
+        },
+        type: "POST",
+        url: "/accounts/register",
+      }).done(function (data) {
+        if (data.error) {
+          $("#errorAlert").text(data.error).show();
+          $("#spinner").addClass("d-none");
+          $("#registerBtn").prop("disabled", false);
+        } else {
+          $("#spinner").addClass("d-none");
+          $("#registerBtn").prop("disabled", false);
+          $("#errorAlert").text(data.error).hide();
+          alert("We have received your registration!");
+          window.location.href = "/accounts/login";
+        }
+      });
+      e.preventDefault();
+    });
+  });
+</script>
+{% endblock %}

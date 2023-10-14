@@ -1,0 +1,150 @@
+{% extends "layouts/base.html" %} {% block title %} Supervisors {% endblock %}
+{% block content %}
+<div class="page-heading mb-4">
+  <h2>Supervisors</h2>
+</div>
+<div class="card">
+  <div class="card-header">
+    {% if user_type == "student" %} My Supervisors {% else %} Supervisors {%
+    endif %}
+  </div>
+  <div class="card-body">
+    {% if supervisors_list %}
+    <table class="table" id="myTable">
+      <thead>
+        <tr>
+          <th>Name</th>
+          {% if user_type == "student" %}
+          <th>Supervisor Type</th>
+          {% endif %}
+          <th>Contact Number</th>
+          <th>Email</th>
+          {% if user_type == "convenor" or user_type == "admin" %}
+          <th></th>
+          {% endif %}
+        </tr>
+      </thead>
+      <tbody>
+        {% for supervisor in supervisors_list %}
+        <tr>
+          <td>{{supervisor.first_name}} {{supervisor.last_name}}</td>
+          {% if user_type == "student" %} {% if supervisor.supervisor_type ==
+          "principal" %}
+          <td>Principal Supervisor</td>
+          {% else %}
+          <td>Co-supervisor</td>
+          {% endif %} {% endif %}
+          <td>{{supervisor.phone}}</td>
+          <td>{{supervisor.email}}</td>
+          {% if user_type == "convenor" or user_type == "admin" %}
+          <td>
+            <button
+              type="button"
+              class="btn btn-outline-primary btn-sm"
+              data-bs-toggle="modal"
+              data-bs-target="#view_supervisor{{supervisor.supervisor_id}}"
+            >
+              View Profile
+            </button>
+          </td>
+          <div
+            class="modal fade"
+            id="view_supervisor{{supervisor.supervisor_id}}"
+            tabindex="-1"
+            aria-labelledby="view_supervisorLabel"
+            aria-hidden="true"
+          >
+            <div class="modal-dialog modal-lg">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h1 class="modal-title fs-5" id="view_supervisorLabel">
+                    {{supervisor.first_name}} {{supervisor.last_name}}
+                  </h1>
+                  <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="modal"
+                    aria-label="Close"
+                  ></button>
+                </div>
+                <!-- modal body supervisor details -->
+                <div class="modal-body">
+                  <div class="card">
+                    <ul class="list-group list-group-flush">
+                      <li class="list-group-item">
+                        <!-- personal details field -->
+                        <h6>Personal Details</h6>
+                        <div>
+                          Name: {{supervisor.first_name}}
+                          {{supervisor.last_name}}
+                        </div>
+                        <div>Email: {{supervisor.email}}</div>
+                        <div>Contact Number: {{supervisor.phone}}</div>
+                        <div>Department: {{supervisor.department_name}}</div>
+                      </li>
+                      <li class="list-group-item">
+                        <!-- supervisee field -->
+                        <h6>Supervisees</h6>
+                        {% if supervisor.supervisee_list | length > 0 %} {% for
+                        supervisee in supervisor.supervisee_list %}
+                        <div>
+                          {{supervisee.student_first_name}}
+                          {{supervisee.student_last_name}}
+                        </div>
+                        {% endfor %} {% else %}
+                        <div>No supervisees assigned yet.</div>
+                        {% endif %}
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+                <div class="modal-footer">
+                  <button
+                    type="button"
+                    class="btn btn-primary"
+                    data-bs-dismiss="modal"
+                  >
+                    Close
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          {% endif %}
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    {% else %}
+    <p class="card-text">You have no supervisors assigned yet.</p>
+    {% endif %}
+  </div>
+</div>
+{% if user_type == "student" %}
+<a
+  href="{{url_for('student_dashboard')}}"
+  class="btn btn-sm btn-outline-primary mt-3"
+  >Dashboard</a
+>
+{% elif user_type == "administrator" %}
+<a
+  href="{{url_for('administrator_dashboard')}}"
+  class="btn btn-sm btn-outline-primary mt-3"
+  >Dashboard</a
+>
+{% elif user_type == "convenor" %}
+<a
+  href="{{url_for('convenor_dashboard')}}"
+  class="btn btn-sm btn-outline-primary mt-3"
+  >Dashboard</a
+>
+{% endif %} {% endblock %} {% block script%}
+<script>
+  $(document).ready(function () {
+    $("#myTable").DataTable({
+      columnDefs: [{ targets: 3, orderable: false }],
+    });
+  });
+</script>
+{% endblock %}

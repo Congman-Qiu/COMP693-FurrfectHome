@@ -1,0 +1,16 @@
+{% extends "layouts/base.html" %} {% block title %} Home {% endblock %} {% block content %} <div
+    class="px-4 py-5 my-5 text-center">
+    <h1 class="display-4 fw-bold text-body-emphasis">PurrfectHome</h1>
+    <div class="col-lg-6 mx-auto">
+        <p class="lead mb-4">Welcome to the FurrfectHome <br/>A platform to help cats find a lovely home <br/>As every cat deserves a perfect home.</p>
+        <div class="d-grid gap-2 d-sm-flex justify-content-sm-center mb-5">
+            <a href="/accounts/login" class="btn btn-primary btn-lg px-4 me-sm-3">Portal Login</a>
+        </div>
+    </div>
+    <div class="overflow-hidden">
+        <div class="container px-5">
+            <img src="../static/images/cover-image.jpg" class="img-fluid rounded-3 mb-4" alt="Cover Image"
+                width="520" loading="lazy">
+        </div>
+    </div>
+</div> {% endblock %}

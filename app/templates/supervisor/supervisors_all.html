@@ -1,0 +1,120 @@
+{% extends "layouts/base.html" %} {% block title %} Supervisors {% endblock %}
+{% block content %}
+<div>
+  {% if supervisors_list | length > 0 %}
+  <div class="card">
+    <div class="card-header">Supervisors</div>
+    <div class="card-body">
+      <br />
+      <table class="table" id="myTable">
+        <thead>
+          <tr>
+            <th>Supervisor ID</th>
+            <th>Name</th>
+            <th>Department</th>
+            <th></th>
+          </tr>
+        </thead>
+
+        <tbody>
+          {% for supervisor in supervisors_list%}
+          <tr>
+            <td>{{supervisor.supervisor_id}}</td>
+            <td>{{supervisor.first_name}} {{supervisor.last_name}}</td>
+            <td>{{supervisor.department_name}}</td>
+            <!-- Button trigger modal for viewing full details of selected supervisor-->
+            <td>
+              <button
+                type="button"
+                class="btn btn-outline-primary btn-sm"
+                data-bs-toggle="modal"
+                data-bs-target="#view_supervisor{{supervisor_id}}"
+              >
+                View Profile
+              </button>
+            </td>
+
+            <!-- Modal -->
+            <div
+              class="modal fade"
+              id="view_supervisor{{supervisor_id}}"
+              tabindex="-1"
+              aria-labelledby="view_supervisorLabel"
+              aria-hidden="true"
+            >
+              <div class="modal-dialog modal-fullscreen-lg-down">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="view_supervisorLabel">
+                      {{supervisor.first_name}} {{supervisor.last_name}}
+                    </h1>
+                    <button
+                      type="button"
+                      class="btn-close"
+                      data-bs-dismiss="modal"
+                      aria-label="Close"
+                    ></button>
+                  </div>
+                  <!-- modal body supervisor full detail-->
+                  <div class="modal-body">
+                    <div class="card">
+                      <ul class="list-group list-group-flush">
+                        <li class="list-group-item">
+                          <!-- personal details field -->
+                          <h6>Personal Details</h6>
+                          <div>
+                            Name: {{supervisor.first_name}}
+                            {{supervisor.last_name}}
+                          </div>
+                          <div>Email: {{supervisor.email}}</div>
+                          <div>Contact Number: {{supervisor.phone}}</div>
+                          <div>Department: {{supervisor.department_name}}</div>
+                        </li>
+                        <li class="list-group-item">
+                          <!-- supervisee field -->
+                          <h6>Supervisee(s)</h6>
+                          {% if supervisor.supervisee_list %} {% for supervisee
+                          in supervisor.supervisee_list %}
+                          <div>
+                            {{supervisee.student_first_name}}
+                            {{supervisee.student_last_name}}
+                          </div>
+                          {% endfor %} {% else %}
+                          <div>No supervisees assigned.</div>
+                          {% endif %}
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                  <div class="modal-footer">
+                    <button
+                      type="button"
+                      class="btn btn-primary"
+                      data-bs-dismiss="modal"
+                    >
+                      Close
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  {% else %}
+  <h5>No supervisors found.</h5>
+  {% endif %}
+</div>
+
+{% endblock %} {% block script%}
+<script>
+  $(document).ready(function () {
+    $("#myTable").DataTable({
+      columnDefs: [{ targets: 3, orderable: false }],
+    });
+  });
+</script>
+{% endblock %}
